@@ -5,14 +5,16 @@
 #include <vector>
 template <typename T>
 using vector = std::vector<T>;
-#endif
-#ifdef TEST_STL_DEQUE
+#elif TEST_STL_DEQUE
 #include "deque"
 template <typename T>
 using vector = std::deque<T>;
-#endif
-#ifdef TEST_CHUNK_VECTOR_AUTO
+#elif TEST_CHUNK_VECTOR
 #include "chunk_vector.hpp"
+template <typename T>
+using vector = CustomVector::chunk_vector<T>;
+#elif TEST_CHUNK_VECTOR_V2
+#include "chunk_vector_v2.hpp"
 template <typename T>
 using vector = CustomVector::chunk_vector<T>;
 #endif

@@ -39,23 +39,44 @@ target_compile_definitions(benchmark-deque-as-vector PRIVATE TEST_STL_DEQUE)
 target_link_libraries(benchmark-deque-as-vector benchmark::benchmark)
 
 add_executable(
-        benchmark-chunk-vector-auto
+        benchmark-chunk-vector
         benchmark_vector.cpp
 )
-target_compile_definitions(benchmark-chunk-vector-auto PRIVATE TEST_CHUNK_VECTOR_AUTO)
-target_link_libraries(benchmark-chunk-vector-auto benchmark::benchmark)
+target_compile_definitions(benchmark-chunk-vector PRIVATE TEST_CHUNK_VECTOR)
+target_link_libraries(benchmark-chunk-vector benchmark::benchmark)
 
 add_executable(
-        test-chunk-vector
+        benchmark-chunk-vector-v2
+        benchmark_vector.cpp
+)
+target_compile_definitions(benchmark-chunk-vector-v2 PRIVATE TEST_CHUNK_VECTOR_V2)
+target_link_libraries(benchmark-chunk-vector-v2 benchmark::benchmark)
+
+add_executable(
+        test-chunk-vector-trivially-copyable
         test_vector.cpp
 )
-target_compile_definitions(test-chunk-vector PRIVATE TEST_CHUNK_VECTOR)
-target_link_libraries(test-chunk-vector gtest_main)
+target_compile_definitions(test-chunk-vector-trivially-copyable PRIVATE TEST_CHUNK_VECTOR TRIVIALLY_COPYABLE)
+target_link_libraries(test-chunk-vector-trivially-copyable gtest_main)
+
+add_executable(
+        test-chunk-vector-non-trivially-copyable
+        test_vector.cpp
+)
+target_compile_definitions(test-chunk-vector-non-trivially-copyable PRIVATE TEST_CHUNK_VECTOR NON_TRIVIALLY_COPYABLE)
+target_link_libraries(test-chunk-vector-non-trivially-copyable gtest_main)
 
 # Custom target to run all benchmarks
 add_custom_target(run-all-benchmarks
-        DEPENDS benchmark-stl-vector benchmark-chunk-vector-auto benchmark-deque-as-vector
+        DEPENDS benchmark-stl-vector benchmark-chunk-vector benchmark-deque-as-vector
         COMMAND benchmark-stl-vector --benchmark_out=../BM_results/benchmark_stl_vector.txt --benchmark_out_format=console
-        COMMAND benchmark-chunk-vector-auto --benchmark_out=../BM_results/benchmark_chunk_vector_auto.txt --benchmark_out_format=console
+        COMMAND benchmark-chunk-vector --benchmark_out=../BM_results/benchmark_chunk_vector.txt --benchmark_out_format=console
         COMMAND benchmark-deque-as-vector --benchmark_out=../BM_results/benchmark_deque_as_vector.txt --benchmark_out_format=console
+)
+
+# Custom target to run benchmarks for chunk vector of different versions
+add_custom_target(run-chunk-vector-benchmarks
+        DEPENDS benchmark-chunk-vector benchmark-chunk-vector-v2
+        COMMAND benchmark-chunk-vector --benchmark_out=../BM_results/benchmark_chunk_vector.txt --benchmark_out_format=console
+        COMMAND benchmark-chunk-vector-v2 --benchmark_out=../BM_results/benchmark_chunk_vector_v2.txt --benchmark_out_format=console
 )
