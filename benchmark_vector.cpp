@@ -93,6 +93,22 @@ void push_back_BM(benchmark::State &state) {
     }
 }
 
+template <typename T = int, std::size_t iterations = 1000>
+void push_back_after_reserve_BM(benchmark::State &state) {
+    T obj = T();
+
+    for (auto _ : state) {
+        vector<T> v;
+#ifndef TEST_STL_DEQUE
+        v.reserve(iterations);
+#endif
+        for (std::size_t i = 0; i < iterations; ++i) {
+            v.push_back(obj);
+        }
+        benchmark::DoNotOptimize(v);
+    }
+}
+
 template <typename T = int, std::size_t size = 1000>
 void access_BM(benchmark::State &state) {
     vector<T> v(size);
@@ -110,8 +126,11 @@ void random_access_BM(benchmark::State &state) {
 
     for (auto _ : state) {
         for (std::size_t i = 0; i < size; ++i) {
-            benchmark::DoNotOptimize(v[i]);
-            benchmark::DoNotOptimize(v[size - 1 - i]);
+            if (i % 2) {
+                benchmark::DoNotOptimize(v[i]);
+            } else {
+                benchmark::DoNotOptimize(v[size - 1 - i]);
+            }
         }
     }
 }
@@ -132,6 +151,29 @@ BENCHMARK(push_back_BM<BigSizeClass<1024>, 1000>);
 BENCHMARK(push_back_BM<NonTriviallyCopyableBigSizeClass<1024>, 1000>);
 BENCHMARK(push_back_BM<BigSizeClass<1024>, 100000>);
 BENCHMARK(push_back_BM<NonTriviallyCopyableBigSizeClass<1024>, 100000>);
+
+BENCHMARK(push_back_after_reserve_BM<int, 1000>);
+BENCHMARK(push_back_after_reserve_BM<NonTriviallyCopyableInt, 1000>);
+BENCHMARK(push_back_after_reserve_BM<int, 100000>);
+BENCHMARK(push_back_after_reserve_BM<NonTriviallyCopyableInt, 100000>);
+
+BENCHMARK(push_back_after_reserve_BM<BigSizeClass<512>, 1000>);
+BENCHMARK(push_back_after_reserve_BM<
+          NonTriviallyCopyableBigSizeClass<512>,
+          1000>);
+BENCHMARK(push_back_after_reserve_BM<BigSizeClass<512>, 100000>);
+BENCHMARK(push_back_after_reserve_BM<
+          NonTriviallyCopyableBigSizeClass<512>,
+          100000>);
+
+BENCHMARK(push_back_after_reserve_BM<BigSizeClass<1024>, 1000>);
+BENCHMARK(push_back_after_reserve_BM<
+          NonTriviallyCopyableBigSizeClass<1024>,
+          1000>);
+BENCHMARK(push_back_after_reserve_BM<BigSizeClass<1024>, 100000>);
+BENCHMARK(push_back_after_reserve_BM<
+          NonTriviallyCopyableBigSizeClass<1024>,
+          100000>);
 
 BENCHMARK(access_BM<int, 1000>);
 BENCHMARK(access_BM<int, 100000>);
