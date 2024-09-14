@@ -254,8 +254,61 @@ public:
         return std::move(*get_ptr_by_index(v_size - 1));
     }
 
+    // Iterators
+    iterator begin() noexcept {
+        return iterator(this, 0);
+    }
+
+    const_iterator begin() const noexcept {
+        return const_iterator(this, 0);
+    }
+
+    const_iterator cbegin() const noexcept {
+        return const_iterator(this, 0);
+    }
+
+    iterator end() noexcept {
+        return iterator(this, v_size);
+    }
+
+    const_iterator end() const noexcept {
+        return const_iterator(this, v_size);
+    }
+
+    const_iterator cend() const noexcept {
+        return const_iterator(this, v_size);
+    }
+
+    reverse_iterator rbegin() noexcept {
+        return reverse_iterator(end());
+    }
+
+    const_reverse_iterator rbegin() const noexcept {
+        return const_reverse_iterator(cend());
+    }
+
+    const_reverse_iterator crbegin() const noexcept {
+        return const_reverse_iterator(cend());
+    }
+
+    reverse_iterator rend() noexcept {
+        return reverse_iterator(begin());
+    }
+
+    const_reverse_iterator rend() const noexcept {
+        return const_reverse_iterator(cbegin());
+    }
+
+    const_reverse_iterator crend() const noexcept {
+        return const_reverse_iterator(cbegin());
+    }
+
     [[nodiscard]] size_type size() const noexcept {
         return v_size;
+    }
+
+    [[nodiscard]] bool empty() const noexcept {
+        return v_size == 0;
     }
 
     [[nodiscard]] size_type capacity() const noexcept {
