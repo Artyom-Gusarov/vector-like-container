@@ -39,7 +39,7 @@ private:
         }
 
         Value *operator->() const noexcept {
-            return get_ptr_by_index(m_index);
+            return m_chunk_vector_ptr->get_ptr_by_index(m_index);
         }
 
         chunk_iterator &operator++() noexcept {
@@ -107,20 +107,14 @@ private:
         }
     };
 
-    std::size_t v_size;
-    std::size_t v_capacity;
-    std::vector<T *> v_chunks;
-
-    T *get_ptr_by_index(std::size_t index) {
-        return v_chunks[index / chunk_size] + index % chunk_size;
-    }
-
 public:
+    // Member types
     using value_type = T;
     using allocator_type = Alloc;
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
     using reference = value_type &;
+    using rvalue_reference = value_type &&;
     using const_reference = const value_type &;
     using pointer = typename std::allocator_traits<Alloc>::pointer;
     using const_pointer = typename std::allocator_traits<Alloc>::const_pointer;
@@ -129,17 +123,36 @@ public:
     using reverse_iterator = std::reverse_iterator<iterator>;
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-    chunk_vector() : v_size(0), v_capacity(0) {
+private:
+    size_type v_size;
+    std::vector<pointer> v_chunks;
+
+    pointer get_ptr_by_index(size_type index) {
+        return v_chunks[index / chunk_size] + index % chunk_size;
     }
 
-    explicit chunk_vector(std::size_t n) : v_size(0), v_capacity(0) {
-        for (std::size_t i = 0; i < n; ++i) {
-            push_back(T());
+    void check_out_of_bound(size_type index) {
+        if (index >= capacity()) {
+            throw std::out_of_range(
+                "Requested index: " + std::to_string(index) +
+                ", capacity: " + std::to_string(capacity())
+            );
         }
     }
 
-    chunk_vector(std::size_t n, const T &t) : v_size(0), v_capacity(0) {
-        for (std::size_t i = 0; i < n; ++i) {
+public:
+    // Constructors
+    chunk_vector() : v_size(0) {
+    }
+
+    explicit chunk_vector(size_type n) : v_size(0) {
+        for (size_type i = 0; i < n; ++i) {
+            push_back(value_type());
+        }
+    }
+
+    chunk_vector(size_type n, const_reference t) : v_size(0) {
+        for (size_type i = 0; i < n; ++i) {
             push_back(t);
         }
     }
@@ -157,57 +170,96 @@ public:
     chunk_vector &operator=(chunk_vector &&other) = delete;
 
     ~chunk_vector() {
-        for (std::size_t i = 0; i < v_size; ++i) {
-            this->operator[](i).~T();
+        for (size_type i = 0; i < v_size; ++i) {
+            this->operator[](i).~value_type();
         }
-        for (T *chunk : v_chunks) {
-            Alloc().deallocate(chunk, chunk_size);
+        for (pointer chunk : v_chunks) {
+            allocator_type().deallocate(chunk, chunk_size);
         }
     }
 
-    void reserve(std::size_t k) & {
-        while (v_capacity < k) {
-            T *new_chunk = Alloc().allocate(chunk_size);
+    void reserve(size_type k) & {
+        while (capacity() < k) {
+            pointer new_chunk = allocator_type().allocate(chunk_size);
             v_chunks.push_back(new_chunk);
-            v_capacity += chunk_size;
         }
     }
 
-    void push_back(const T &t) & {
+    void push_back(const_reference t) & {
         reserve(v_size + 1);
-        T *cur_chunk = v_chunks[v_size / chunk_size];
-        new (cur_chunk + (v_size++ % chunk_size)) T(t);
+        pointer cur_chunk = v_chunks[v_size / chunk_size];
+        new (cur_chunk + (v_size++ % chunk_size)) value_type(t);
     }
 
-    void push_back(T &&t) & {
+    void push_back(rvalue_reference t) & {
         reserve(v_size + 1);
-        T *cur_chunk = v_chunks[v_size / chunk_size];
-        new (cur_chunk + (v_size++ % chunk_size)) T(std::move(t));
+        pointer cur_chunk = v_chunks[v_size / chunk_size];
+        new (cur_chunk + (v_size++ % chunk_size)) value_type(std::move(t));
     }
 
     void pop_back() & noexcept {
-        T *cur_chunk = v_chunks[(v_size - 1) / chunk_size];
-        cur_chunk[--v_size % chunk_size].~T();
+        pointer cur_chunk = v_chunks[(v_size - 1) / chunk_size];
+        cur_chunk[--v_size % chunk_size].~value_type();
     }
 
-    T &operator[](std::size_t i) & noexcept {
-        return v_chunks[i / chunk_size][i % chunk_size];
+    // Element access
+    reference at(size_type pos) & {
+        check_out_of_bound(pos);
+        return *get_ptr_by_index(pos);
     }
 
-    [[nodiscard]] const T &operator[](std::size_t i) const & noexcept {
-        return v_chunks[i / chunk_size][i % chunk_size];
+    [[nodiscard]] const_reference at(size_type pos) const & {
+        check_out_of_bound(pos);
+        return *get_ptr_by_index(pos);
     }
 
-    [[nodiscard]] T &&operator[](std::size_t i) && noexcept {
-        return std::move(v_chunks[i / chunk_size][i % chunk_size]);
+    [[nodiscard]] rvalue_reference at(size_type pos) && {
+        check_out_of_bound(pos);
+        return std::move(*get_ptr_by_index(pos));
     }
 
-    [[nodiscard]] std::size_t size() const noexcept {
+    reference operator[](size_type pos) & noexcept {
+        return *get_ptr_by_index(pos);
+    }
+
+    [[nodiscard]] const_reference operator[](size_type pos) const & noexcept {
+        return *get_ptr_by_index(pos);
+    }
+
+    [[nodiscard]] rvalue_reference operator[](size_type pos) && noexcept {
+        return std::move(*get_ptr_by_index(pos));
+    }
+
+    reference front() & noexcept {
+        return *v_chunks[0];
+    }
+
+    [[nodiscard]] const_reference front() const & noexcept {
+        return *v_chunks[0];
+    }
+
+    [[nodiscard]] rvalue_reference front() && noexcept {
+        return std::move(*v_chunks[0]);
+    }
+
+    reference back() & noexcept {
+        return *get_ptr_by_index(v_size - 1);
+    }
+
+    [[nodiscard]] const_reference back() const & noexcept {
+        return *get_ptr_by_index(v_size - 1);
+    }
+
+    [[nodiscard]] rvalue_reference back() && noexcept {
+        return std::move(*get_ptr_by_index(v_size - 1));
+    }
+
+    [[nodiscard]] size_type size() const noexcept {
         return v_size;
     }
 
-    [[nodiscard]] std::size_t capacity() const noexcept {
-        return v_capacity;
+    [[nodiscard]] size_type capacity() const noexcept {
+        return v_chunks.size() * chunk_size;
     }
 };
 }  // namespace CustomVector
