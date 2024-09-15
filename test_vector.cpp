@@ -340,6 +340,52 @@ TEST_F(IteratorsTest, rend) {
     EXPECT_EQ((cv.crend() - 1)->m_value, 1);
 }
 
+class CapacityTest : public testing::Test {
+protected:
+    vector<test_int> v;
+    vector<test_int> empty_v;
+
+    CapacityTest() {
+        v.push_back(1);
+        v.push_back(2);
+        v.push_back(3);
+        v.push_back(4);
+        v.push_back(5);
+    }
+};
+
+TEST_F(CapacityTest, empty) {
+    EXPECT_TRUE(empty_v.empty());
+    EXPECT_FALSE(v.empty());
+}
+
+TEST_F(CapacityTest, size) {
+    EXPECT_EQ(empty_v.size(), 0);
+    EXPECT_EQ(v.size(), 5);
+    v.pop_back();
+    v.pop_back();
+    EXPECT_EQ(v.size(), 3);
+    v.push_back(1);
+    EXPECT_EQ(v.size(), 4);
+}
+
+TEST_F(CapacityTest, max_size) {
+    EXPECT_GE(v.max_size(), 5);
+}
+
+TEST_F(CapacityTest, reserve_capacity) {
+    v.reserve(10000);
+    EXPECT_GE(v.capacity(), 10000);
+    v.reserve(10);
+    EXPECT_GE(v.capacity(), 10000);
+}
+
+TEST_F(CapacityTest, shrink_to_fit) {
+    v.reserve(100000);
+    v.shrink_to_fit();
+    EXPECT_LT(v.capacity(), 100000);
+}
+
 class VectorTest : public testing::Test {
 protected:
     vector<test_int> v;

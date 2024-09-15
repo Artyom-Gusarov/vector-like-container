@@ -203,30 +203,6 @@ public:
         }
     }
 
-    void reserve(size_type k) & {
-        while (capacity() < k) {
-            pointer new_chunk = allocator_type().allocate(chunk_size);
-            v_chunks.push_back(new_chunk);
-        }
-    }
-
-    void push_back(const_reference t) & {
-        reserve(v_size + 1);
-        pointer cur_chunk = v_chunks[v_size / chunk_size];
-        new (cur_chunk + (v_size++ % chunk_size)) value_type(t);
-    }
-
-    void push_back(rvalue_reference t) & {
-        reserve(v_size + 1);
-        pointer cur_chunk = v_chunks[v_size / chunk_size];
-        new (cur_chunk + (v_size++ % chunk_size)) value_type(std::move(t));
-    }
-
-    void pop_back() & noexcept {
-        pointer cur_chunk = v_chunks[(v_size - 1) / chunk_size];
-        cur_chunk[--v_size % chunk_size].~value_type();
-    }
-
     // Element access
     reference at(size_type pos) & {
         check_out_of_bound(pos);
@@ -328,16 +304,110 @@ public:
         return const_reverse_iterator(cbegin());
     }
 
-    [[nodiscard]] size_type size() const noexcept {
-        return v_size;
-    }
-
+    // Capacity
     [[nodiscard]] bool empty() const noexcept {
         return v_size == 0;
     }
 
+    [[nodiscard]] size_type size() const noexcept {
+        return v_size;
+    }
+
+    [[nodiscard]] size_type max_size() const noexcept {
+        return std::numeric_limits<size_type>::max();
+    }
+
+    void reserve(size_type k) & {
+        while (capacity() < k) {
+            pointer new_chunk = allocator_type().allocate(chunk_size);
+            v_chunks.push_back(new_chunk);
+        }
+    }
+
     [[nodiscard]] size_type capacity() const noexcept {
         return v_chunks.size() * chunk_size;
+    }
+
+    void shrink_to_fit() & {
+        while (capacity() - v_size >= chunk_size) {
+            allocator_type().deallocate(v_chunks.back(), chunk_size);
+            v_chunks.pop_back();
+        }
+        v_chunks.shrink_to_fit();
+    }
+
+    // Modifiers
+    void clear() & noexcept {
+        for (size_type ind = 0; ind < v_size; ++ind) {
+            operator[](ind).~value_type();
+        }
+        v_size = 0;
+    }
+
+    // TODO insert, insert_range, emplace, erase
+
+    void push_back(const_reference t) & {
+        reserve(v_size + 1);
+        pointer pos_for_new_value = get_ptr_by_index(v_size++);
+        new (pos_for_new_value) value_type(t);
+    }
+
+    void push_back(rvalue_reference t) & {
+        reserve(v_size + 1);
+        pointer pos_for_new_value = get_ptr_by_index(v_size++);
+        new (pos_for_new_value) value_type(std::move(t));
+    }
+
+    template <class... Args>
+    reference emplace_back(Args &&...args) {
+        reserve(v_size + 1);
+        pointer pos_for_new_value = get_ptr_by_index(v_size++);
+        std::allocator_traits<allocator_type>::construct(
+            allocator_type(), pos_for_new_value, std::forward<Args>(args)...
+        );
+        return back();
+    }
+
+    void pop_back() & noexcept {
+        operator[](--v_size).~value_type();
+    }
+
+    void resize(size_type count) & {
+        while (count < v_size) {
+            pop_back();
+        }
+        reserve(count);
+        while (count > v_size) {
+            push_back(T());
+        }
+    }
+
+    void resize(size_type count, const_reference t) & {
+        while (count < v_size) {
+            pop_back();
+        }
+        reserve(count);
+        while (count > v_size) {
+            push_back(t);
+        }
+    }
+
+    void resize(size_type count, rvalue_reference t) & {
+        while (count < v_size) {
+            pop_back();
+        }
+        reserve(count);
+        while (count > v_size + 1) {
+            push_back(t);
+        }
+        if (count == v_size + 1) {
+            push_back(std::move(t));
+        }
+    }
+
+    void swap(chunk_vector &other) {
+        v_chunks.swap(other.v_chunks);
+        std::swap(v_size, other.v_size);
     }
 
     // Friend functions
