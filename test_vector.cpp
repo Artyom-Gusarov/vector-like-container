@@ -386,6 +386,107 @@ TEST_F(CapacityTest, shrink_to_fit) {
     EXPECT_LT(v.capacity(), 100000);
 }
 
+class ModifiersTest : public testing::Test {
+protected:
+    vector<test_int> v;
+    vector<test_int> empty_v;
+
+    ModifiersTest() {
+        v.push_back(1);
+        v.push_back(2);
+        v.push_back(3);
+        v.push_back(4);
+        v.push_back(5);
+    }
+};
+
+TEST_F(ModifiersTest, clear) {
+    v.clear();
+    EXPECT_TRUE(v.empty());
+}
+
+TEST_F(ModifiersTest, insert_one_element) {
+    v.insert(v.begin() + 2, 123);
+    EXPECT_EQ(v[0].m_value, 1);
+    EXPECT_EQ(v[1].m_value, 2);
+    EXPECT_EQ(v[2].m_value, 123);
+    EXPECT_EQ(v[3].m_value, 3);
+    EXPECT_EQ(v[4].m_value, 4);
+    EXPECT_EQ(v[5].m_value, 5);
+    EXPECT_EQ(v.size(), 6);
+}
+
+TEST_F(ModifiersTest, insert_multiple_elements) {
+    v.insert(v.begin() + 2, 3, 123);
+    EXPECT_EQ(v[0].m_value, 1);
+    EXPECT_EQ(v[1].m_value, 2);
+    EXPECT_EQ(v[2].m_value, 123);
+    EXPECT_EQ(v[3].m_value, 123);
+    EXPECT_EQ(v[4].m_value, 123);
+    EXPECT_EQ(v[5].m_value, 3);
+    EXPECT_EQ(v[6].m_value, 4);
+    EXPECT_EQ(v[7].m_value, 5);
+    EXPECT_EQ(v.size(), 8);
+}
+
+TEST_F(ModifiersTest, push_back) {
+    v.push_back(123);
+    EXPECT_EQ(v[5].m_value, 123);
+    EXPECT_EQ(v.size(), 6);
+    test_int tmp = 999;
+    v.push_back(tmp);
+    EXPECT_EQ(v[6].m_value, 999);
+    EXPECT_EQ(v.size(), 7);
+}
+
+TEST_F(ModifiersTest, emplace_back) {
+    v.emplace_back(123);
+    EXPECT_EQ(v[5].m_value, 123);
+    EXPECT_EQ(v.size(), 6);
+    v.emplace_back(999);
+    EXPECT_EQ(v[6].m_value, 999);
+    EXPECT_EQ(v.size(), 7);
+}
+
+TEST_F(ModifiersTest, pop_back) {
+    v.pop_back();
+    EXPECT_EQ(v.size(), 4);
+    v.pop_back();
+    EXPECT_EQ(v.size(), 3);
+}
+
+TEST_F(ModifiersTest, resize) {
+    v.resize(10);
+    EXPECT_EQ(v.size(), 10);
+    EXPECT_EQ(v[5].m_value, 0);
+    EXPECT_EQ(v[6].m_value, 0);
+    EXPECT_EQ(v[7].m_value, 0);
+    EXPECT_EQ(v[8].m_value, 0);
+    EXPECT_EQ(v[9].m_value, 0);
+    v.resize(3);
+    EXPECT_EQ(v.size(), 3);
+    v.resize(5, 123);
+    EXPECT_EQ(v[0].m_value, 1);
+    EXPECT_EQ(v[1].m_value, 2);
+    EXPECT_EQ(v[2].m_value, 3);
+    EXPECT_EQ(v[3].m_value, 123);
+    EXPECT_EQ(v[4].m_value, 123);
+}
+
+TEST_F(ModifiersTest, swap) {
+    v.swap(empty_v);
+    EXPECT_TRUE(v.empty());
+    EXPECT_EQ(empty_v.size(), 5);
+    std::swap(v, empty_v);
+    EXPECT_EQ(v.size(), 5);
+    EXPECT_TRUE(empty_v.empty());
+    EXPECT_EQ(v[0].m_value, 1);
+    EXPECT_EQ(v[1].m_value, 2);
+    EXPECT_EQ(v[2].m_value, 3);
+    EXPECT_EQ(v[3].m_value, 4);
+    EXPECT_EQ(v[4].m_value, 5);
+}
+
 class VectorTest : public testing::Test {
 protected:
     vector<test_int> v;

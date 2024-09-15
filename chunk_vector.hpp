@@ -43,6 +43,10 @@ private:
 
         ~chunk_iterator() = default;
 
+        operator chunk_iterator<true>() const noexcept {
+            return chunk_iterator<true>(m_chunk_vector_ptr, m_index);
+        }
+
         bool operator==(const chunk_iterator &other) const noexcept {
             return m_chunk_vector_ptr == other.m_chunk_vector_ptr &&
                    m_index == other.m_index;
@@ -160,6 +164,31 @@ private:
                 "Requested index: " + std::to_string(index) +
                 ", size: " + std::to_string(capacity())
             );
+        }
+    }
+
+    void elements_shift(size_type start_pos, difference_type shift) {
+        if (shift > 0) {
+            reserve(v_size + shift);
+            for (size_type current_pos = v_size - 1; current_pos > start_pos;
+                 --current_pos) {
+                if (current_pos + shift >= v_size) {
+                    new (get_ptr_by_index(current_pos + shift))
+                        value_type(std::move(operator[](current_pos)));
+                } else {
+                    operator[](current_pos + shift) =
+                        std::move(operator[](current_pos));
+                }
+            }
+            if (start_pos != v_size) {
+                if (start_pos + shift >= v_size) {
+                    new (get_ptr_by_index(start_pos + shift))
+                        value_type(std::move(operator[](start_pos)));
+                } else {
+                    operator[](start_pos + shift) =
+                        std::move(operator[](start_pos));
+                }
+            }
         }
     }
 
@@ -344,7 +373,49 @@ public:
         v_size = 0;
     }
 
-    // TODO insert, insert_range, emplace, erase
+    // TODO insert, emplace, erase
+
+    iterator insert(const_iterator pos, const_reference value) & {
+        elements_shift(pos - begin(), 1);
+        if (pos == end()) {
+            new (get_ptr_by_index(v_size)) value_type(value);
+        } else {
+            operator[](pos - begin()) = value;
+        }
+        ++v_size;
+        return iterator(this, pos - begin());
+    }
+
+    iterator insert(const_iterator pos, rvalue_reference value) & {
+        elements_shift(pos - begin(), 1);
+        if (pos == end()) {
+            new (get_ptr_by_index(v_size)) value_type(std::move(value));
+        } else {
+            operator[](pos - begin()) = std::move(value);
+        }
+        ++v_size;
+        return iterator(this, pos - begin());
+    }
+
+    iterator insert(const_iterator pos, size_type count, const_reference value)
+        & {
+        elements_shift(pos - begin(), count);
+        for (size_type current_pos = pos - begin();
+             current_pos < count + (pos - begin()); ++current_pos) {
+            if (current_pos >= v_size) {
+                new (get_ptr_by_index(current_pos)) value_type(value);
+            } else {
+                operator[](current_pos) = value;
+            }
+        }
+        v_size += count;
+        return iterator(this, pos - begin());
+    }
+
+    //    template <class InputIt>
+    //    iterator insert(const_iterator pos, InputIt first, InputIt last) & {
+    //
+    //    }
 
     void push_back(const_reference t) & {
         reserve(v_size + 1);
@@ -362,8 +433,9 @@ public:
     reference emplace_back(Args &&...args) {
         reserve(v_size + 1);
         pointer pos_for_new_value = get_ptr_by_index(v_size++);
+        allocator_type tmp_alloc;
         std::allocator_traits<allocator_type>::construct(
-            allocator_type(), pos_for_new_value, std::forward<Args>(args)...
+            tmp_alloc, pos_for_new_value, std::forward<Args>(args)...
         );
         return back();
     }
@@ -405,7 +477,7 @@ public:
         }
     }
 
-    void swap(chunk_vector &other) {
+    void swap(chunk_vector &other) noexcept {
         v_chunks.swap(other.v_chunks);
         std::swap(v_size, other.v_size);
     }
@@ -421,5 +493,15 @@ public:
     }
 };
 }  // namespace CustomVector
+
+namespace std {
+template <typename T, std::size_t chunk_size, typename Alloc>
+void swap(
+    CustomVector::chunk_vector<T, chunk_size, Alloc> &lhs,
+    CustomVector::chunk_vector<T, chunk_size, Alloc> &rhs
+) noexcept {
+    lhs.swap(rhs);
+}
+}  // namespace std
 
 #endif  // CHUNK_VECTOR_HPP
