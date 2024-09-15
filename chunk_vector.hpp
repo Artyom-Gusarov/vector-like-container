@@ -154,11 +154,11 @@ private:
         return v_chunks[index / chunk_size] + index % chunk_size;
     }
 
-    void check_out_of_bound(size_type index) {
-        if (index >= capacity()) {
+    void check_out_of_bound(size_type index) const {
+        if (index >= size()) {
             throw std::out_of_range(
                 "Requested index: " + std::to_string(index) +
-                ", capacity: " + std::to_string(capacity())
+                ", size: " + std::to_string(capacity())
             );
         }
     }

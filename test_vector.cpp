@@ -39,6 +39,7 @@ public:
 using test_int = NonTriviallyCopyableInt;
 #endif
 
+// Iterator testing
 namespace {
 class ConstIteratorTest : public testing::Test {
 protected:
@@ -240,7 +241,105 @@ TEST_F(MutableIteratorTest, use_std_sort) {
 }
 }  // namespace
 
+// Vector testing
 namespace {
+class AccessTest : public testing::Test {
+protected:
+    vector<test_int> v;
+
+    AccessTest() {
+        v.push_back(1);
+        v.push_back(2);
+        v.push_back(3);
+        v.push_back(4);
+        v.push_back(5);
+    }
+};
+
+TEST_F(AccessTest, at) {
+    EXPECT_EQ(v.at(0).m_value, 1);
+    EXPECT_EQ(v.at(1).m_value, 2);
+    EXPECT_EQ(v.at(2).m_value, 3);
+    EXPECT_EQ(v.at(3).m_value, 4);
+    EXPECT_EQ(v.at(4).m_value, 5);
+    EXPECT_THROW(v.at(5), std::out_of_range);
+    v.at(3) = 123;
+    EXPECT_EQ(v.at(3).m_value, 123);
+}
+
+TEST_F(AccessTest, operator_brackets) {
+    EXPECT_EQ(v[0].m_value, 1);
+    EXPECT_EQ(v[1].m_value, 2);
+    EXPECT_EQ(v[2].m_value, 3);
+    EXPECT_EQ(v[3].m_value, 4);
+    EXPECT_EQ(v[4].m_value, 5);
+    v[3] = 123;
+    EXPECT_EQ(v[3].m_value, 123);
+}
+
+TEST_F(AccessTest, front) {
+    EXPECT_EQ(v.front().m_value, 1);
+    v.front() = 123;
+    EXPECT_EQ(v.front().m_value, 123);
+}
+
+TEST_F(AccessTest, back) {
+    EXPECT_EQ(v.back().m_value, 5);
+    v.back() = 123;
+    EXPECT_EQ(v.back().m_value, 123);
+}
+
+class IteratorsTest : public testing::Test {
+protected:
+    vector<test_int> v;
+    const vector<test_int> cv;
+
+    IteratorsTest()
+        : cv([]() {
+              vector<test_int> tmp;
+              tmp.push_back(test_int(1));
+              tmp.push_back(test_int(2));
+              tmp.push_back(test_int(3));
+              tmp.push_back(test_int(4));
+              tmp.push_back(test_int(5));
+              return tmp;
+          }()) {
+        v.push_back(1);
+        v.push_back(2);
+        v.push_back(3);
+        v.push_back(4);
+        v.push_back(5);
+    }
+};
+
+TEST_F(IteratorsTest, begin) {
+    EXPECT_EQ(v.begin()->m_value, 1);
+    v.begin()->m_value = 123;
+    EXPECT_EQ(v.begin()->m_value, 123);
+    EXPECT_EQ(cv.cbegin()->m_value, 1);
+}
+
+TEST_F(IteratorsTest, end) {
+    EXPECT_EQ((v.end() - 1)->m_value, 5);
+    (v.end() - 1)->m_value = 123;
+    EXPECT_EQ((v.end() - 1)->m_value, 123);
+    EXPECT_EQ((cv.cend() - 1)->m_value, 5);
+}
+
+TEST_F(IteratorsTest, rbegin) {
+    EXPECT_EQ(v.rbegin()->m_value, 5);
+    v.rbegin()->m_value = 123;
+    EXPECT_EQ(v.rbegin()->m_value, 123);
+    EXPECT_EQ(cv.crbegin()->m_value, 5);
+}
+
+TEST_F(IteratorsTest, rend) {
+    EXPECT_EQ((v.rend() - 1)->m_value, 1);
+    (v.rend() - 1)->m_value = 123;
+    EXPECT_EQ((v.rend() - 1)->m_value, 123);
+    EXPECT_EQ((cv.crend() - 1)->m_value, 1);
+}
+
 class VectorTest : public testing::Test {
 protected:
     vector<test_int> v;
