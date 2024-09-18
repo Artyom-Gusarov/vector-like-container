@@ -11,8 +11,7 @@ template <
 class chunk_vector {
 private:
     template <bool is_const>
-    class chunk_iterator
-        : public std::iterator<std::random_access_iterator_tag, T> {
+    class chunk_iterator {
     private:
         using Owner = std::conditional_t<
             is_const,
@@ -170,6 +169,9 @@ private:
     void elements_shift(size_type start_pos, difference_type shift) {
         if (shift > 0) {
             reserve(v_size + shift);
+            if (v_size == 0) {
+                return;
+            }
             for (size_type current_pos = v_size - 1; current_pos > start_pos;
                  --current_pos) {
                 if (current_pos + shift >= v_size) {
@@ -188,6 +190,12 @@ private:
                     operator[](start_pos + shift) =
                         std::move(operator[](start_pos));
                 }
+            }
+        } else if (shift < 0) {
+            for (size_type current_pos = start_pos; current_pos < v_size;
+                 ++current_pos) {
+                operator[](current_pos + shift) =
+                    std::move(operator[](current_pos));
             }
         }
     }
@@ -373,8 +381,6 @@ public:
         v_size = 0;
     }
 
-    // TODO insert, emplace, erase
-
     iterator insert(const_iterator pos, const_reference value) & {
         elements_shift(pos - begin(), 1);
         if (pos == end()) {
@@ -412,10 +418,61 @@ public:
         return iterator(this, pos - begin());
     }
 
-    //    template <class InputIt>
-    //    iterator insert(const_iterator pos, InputIt first, InputIt last) & {
-    //
-    //    }
+    template <
+        class InputIt,
+        std::enable_if_t<
+            std::is_base_of_v<
+                std::input_iterator_tag,
+                typename std::iterator_traits<InputIt>::iterator_category>,
+            bool> = true>
+    iterator insert(const_iterator pos, InputIt first, InputIt last) & {
+        size_type count = std::distance(first, last);
+        elements_shift(pos - begin(), count);
+        for (size_type current_pos = pos - begin();
+             current_pos < count + (pos - begin()); ++current_pos) {
+            if (current_pos >= v_size) {
+                new (get_ptr_by_index(current_pos)) value_type(*first);
+            } else {
+                operator[](current_pos) = *first;
+            }
+            ++first;
+        }
+        v_size += count;
+        return iterator(this, pos - begin());
+    }
+
+    iterator insert(const_iterator pos, std::initializer_list<T> ilist) & {
+        return insert(pos, ilist.begin(), ilist.end());
+    }
+
+    template <class... Args>
+    iterator emplace(const_iterator pos, Args &&...args) {
+        elements_shift(pos - begin(), 1);
+        if (pos == end()) {
+            allocator_type tmp_alloc;
+            std::allocator_traits<allocator_type>::construct(
+                tmp_alloc, get_ptr_by_index(v_size), std::forward<Args>(args)...
+            );
+        } else {
+            operator[](pos - begin()) = value_type(std::forward<Args>(args)...);
+        }
+        ++v_size;
+        return iterator(this, pos - begin());
+    }
+
+    iterator erase(const_iterator pos) {
+        elements_shift(pos - begin() + 1, -1);
+        operator[](--v_size).~value_type();
+        return iterator(this, pos - begin());
+    }
+
+    iterator erase(const_iterator first, const_iterator last) {
+        elements_shift(last - begin(), first - last);
+        for (size_type i = 0; i < static_cast<size_type>(last - first); ++i) {
+            operator[](--v_size).~value_type();
+        }
+        return iterator(this, first - begin());
+    }
 
     void push_back(const_reference t) & {
         reserve(v_size + 1);

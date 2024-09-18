@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <list>
 
 #ifdef TEST_CHUNK_VECTOR
 #include "chunk_vector.hpp"
@@ -324,6 +325,9 @@ TEST_F(IteratorsTest, end) {
     (v.end() - 1)->m_value = 123;
     EXPECT_EQ((v.end() - 1)->m_value, 123);
     EXPECT_EQ((cv.cend() - 1)->m_value, 5);
+    v.clear();
+    EXPECT_EQ(v.begin(), v.end());
+    EXPECT_EQ(v.end() - v.begin(), 0);
 }
 
 TEST_F(IteratorsTest, rbegin) {
@@ -406,7 +410,7 @@ TEST_F(ModifiersTest, clear) {
 }
 
 TEST_F(ModifiersTest, insert_one_element) {
-    v.insert(v.begin() + 2, 123);
+    EXPECT_EQ(v.insert(v.begin() + 2, 123)->m_value, 123);
     EXPECT_EQ(v[0].m_value, 1);
     EXPECT_EQ(v[1].m_value, 2);
     EXPECT_EQ(v[2].m_value, 123);
@@ -417,7 +421,7 @@ TEST_F(ModifiersTest, insert_one_element) {
 }
 
 TEST_F(ModifiersTest, insert_multiple_elements) {
-    v.insert(v.begin() + 2, 3, 123);
+    EXPECT_EQ(v.insert(v.begin() + 2, 3, 123)->m_value, 123);
     EXPECT_EQ(v[0].m_value, 1);
     EXPECT_EQ(v[1].m_value, 2);
     EXPECT_EQ(v[2].m_value, 123);
@@ -427,6 +431,89 @@ TEST_F(ModifiersTest, insert_multiple_elements) {
     EXPECT_EQ(v[6].m_value, 4);
     EXPECT_EQ(v[7].m_value, 5);
     EXPECT_EQ(v.size(), 8);
+}
+
+TEST_F(ModifiersTest, insert_range) {
+    std::list<test_int> l;
+    l.emplace_back(111);
+    l.emplace_back(222);
+    l.emplace_back(333);
+    EXPECT_EQ(v.insert(v.begin() + 2, l.begin(), l.end())->m_value, 111);
+    EXPECT_EQ(v[0].m_value, 1);
+    EXPECT_EQ(v[1].m_value, 2);
+    EXPECT_EQ(v[2].m_value, 111);
+    EXPECT_EQ(v[3].m_value, 222);
+    EXPECT_EQ(v[4].m_value, 333);
+    EXPECT_EQ(v[5].m_value, 3);
+    EXPECT_EQ(v[6].m_value, 4);
+    EXPECT_EQ(v[7].m_value, 5);
+    EXPECT_EQ(v.size(), 8);
+}
+
+TEST_F(ModifiersTest, insert_initializer_list) {
+    EXPECT_EQ(v.insert(v.begin() + 2, {111, 222, 333})->m_value, 111);
+    EXPECT_EQ(v[0].m_value, 1);
+    EXPECT_EQ(v[1].m_value, 2);
+    EXPECT_EQ(v[2].m_value, 111);
+    EXPECT_EQ(v[3].m_value, 222);
+    EXPECT_EQ(v[4].m_value, 333);
+    EXPECT_EQ(v[5].m_value, 3);
+    EXPECT_EQ(v[6].m_value, 4);
+    EXPECT_EQ(v[7].m_value, 5);
+    EXPECT_EQ(v.size(), 8);
+}
+
+TEST_F(ModifiersTest, insert_in_empty_vector) {
+    v.clear();
+    EXPECT_EQ(v.insert(v.end(), 123)->m_value, 123);
+    EXPECT_EQ(v[0].m_value, 123);
+    EXPECT_EQ(v.size(), 1);
+    v.clear();
+    EXPECT_EQ(v.insert(v.end(), 3, 123)->m_value, 123);
+    EXPECT_EQ(v[0].m_value, 123);
+    EXPECT_EQ(v[1].m_value, 123);
+    EXPECT_EQ(v[2].m_value, 123);
+    EXPECT_EQ(v.size(), 3);
+}
+
+TEST_F(ModifiersTest, emplace) {
+    EXPECT_EQ(v.emplace(v.begin() + 2, 123)->m_value, 123);
+    EXPECT_EQ(v[0].m_value, 1);
+    EXPECT_EQ(v[1].m_value, 2);
+    EXPECT_EQ(v[2].m_value, 123);
+    EXPECT_EQ(v[3].m_value, 3);
+    EXPECT_EQ(v[4].m_value, 4);
+    EXPECT_EQ(v[5].m_value, 5);
+    EXPECT_EQ(v.size(), 6);
+    EXPECT_EQ(v.emplace(v.end(), 999)->m_value, 999);
+    EXPECT_EQ(v[6].m_value, 999);
+    EXPECT_EQ(v.size(), 7);
+}
+
+TEST_F(ModifiersTest, erase_one_element) {
+    EXPECT_EQ(v.erase(v.begin() + 2)->m_value, 4);
+    EXPECT_EQ(v[0].m_value, 1);
+    EXPECT_EQ(v[1].m_value, 2);
+    EXPECT_EQ(v[2].m_value, 4);
+    EXPECT_EQ(v[3].m_value, 5);
+    EXPECT_EQ(v.size(), 4);
+}
+
+TEST_F(ModifiersTest, erase_range) {
+    EXPECT_EQ(v.erase(v.begin() + 1, v.begin() + 4)->m_value, 5);
+    EXPECT_EQ(v[0].m_value, 1);
+    EXPECT_EQ(v[1].m_value, 5);
+    EXPECT_EQ(v.size(), 2);
+}
+
+TEST_F(ModifiersTest, erase_all) {
+    v.erase(v.begin(), v.end());
+    EXPECT_TRUE(v.empty());
+}
+
+TEST_F(ModifiersTest, erase_empty_range) {
+    v.erase(v.begin() + 2, v.begin() + 2);
+    EXPECT_EQ(v.size(), 5);
 }
 
 TEST_F(ModifiersTest, push_back) {
