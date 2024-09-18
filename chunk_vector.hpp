@@ -1,6 +1,7 @@
 #ifndef CHUNK_VECTOR_HPP
 #define CHUNK_VECTOR_HPP
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 namespace CustomVector {

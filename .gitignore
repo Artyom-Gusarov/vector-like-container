@@ -12,3 +12,5 @@ _deps
 CMakeUserPresets.json
 .idea/
 cmake-build-debug/
+build/
+cmake-build-debug-coverage/

@@ -5,10 +5,13 @@ set(CMAKE_BUILD_TYPE Debug)
 
 project(MyVector)
 
-set(CMAKE_CXX_FLAGS "-O2 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined,leak -g")
+set(CMAKE_CXX_FLAGS "-O0 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined,leak -g")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
 
 include(FetchContent)
 
