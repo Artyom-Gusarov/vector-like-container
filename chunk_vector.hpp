@@ -292,6 +292,14 @@ public:
         return std::move(*get_ptr_by_index(v_size - 1));
     }
 
+    std::unique_ptr<value_type[]> copy_data() const {
+        std::unique_ptr<value_type[]> data_copy(new value_type[v_size]);
+        for (size_type i = 0; i < v_size; ++i) {
+            data_copy[i] = operator[](i);
+        }
+        return data_copy;
+    }
+
     // Iterators
     iterator begin() noexcept {
         return iterator(this, 0);
@@ -547,6 +555,53 @@ public:
     friend const_iterator
     operator+(difference_type n, const const_iterator &it) noexcept {
         return it + n;
+    }
+
+    friend bool
+    operator==(const chunk_vector &lhs, const chunk_vector &rhs) noexcept {
+        if (lhs.size() != rhs.size()) {
+            return false;
+        }
+        for (size_type i = 0; i < lhs.size(); ++i) {
+            if (lhs[i] != rhs[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    friend bool
+    operator!=(const chunk_vector &lhs, const chunk_vector &rhs) noexcept {
+        return !(lhs == rhs);
+    }
+
+    friend bool
+    operator<(const chunk_vector &lhs, const chunk_vector &rhs) noexcept {
+        size_type min_size = std::min(lhs.size(), rhs.size());
+        for (size_type i = 0; i < min_size; ++i) {
+            if (lhs[i] < rhs[i]) {
+                return true;
+            }
+            if (lhs[i] > rhs[i]) {
+                return false;
+            }
+        }
+        return lhs.size() < rhs.size();
+    }
+
+    friend bool
+    operator>(const chunk_vector &lhs, const chunk_vector &rhs) noexcept {
+        return rhs < lhs;
+    }
+
+    friend bool
+    operator<=(const chunk_vector &lhs, const chunk_vector &rhs) noexcept {
+        return !(lhs > rhs);
+    }
+
+    friend bool
+    operator>=(const chunk_vector &lhs, const chunk_vector &rhs) noexcept {
+        return !(lhs < rhs);
     }
 };
 }  // namespace CustomVector

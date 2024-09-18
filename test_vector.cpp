@@ -290,6 +290,13 @@ TEST_F(AccessTest, back) {
     EXPECT_EQ(v.back().m_value, 123);
 }
 
+TEST_F(AccessTest, dump_data) {
+    auto data = v.copy_data();
+    for (std::size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(data[i].m_value, v[i].m_value);
+    }
+}
+
 class IteratorsTest : public testing::Test {
 protected:
     vector<test_int> v;
@@ -574,75 +581,100 @@ TEST_F(ModifiersTest, swap) {
     EXPECT_EQ(v[4].m_value, 5);
 }
 
-class VectorTest : public testing::Test {
+class NonMemberTest : public testing::Test {
 protected:
-    vector<test_int> v;
-    const test_int num{12345};
-    const test_int a{1};
-    const test_int b{2};
-    const test_int c{3};
+    vector<int> v_1;
+    vector<int> v_eq;
+    vector<int> v_little;
+    vector<int> v_less;
+    vector<int> v_greater;
+    vector<test_int> v_repeatable;
+
+    NonMemberTest() {
+        v_1.push_back(1);
+        v_1.push_back(2);
+        v_1.push_back(3);
+        v_1.push_back(4);
+        v_1.push_back(5);
+        v_eq.push_back(1);
+        v_eq.push_back(2);
+        v_eq.push_back(3);
+        v_eq.push_back(4);
+        v_eq.push_back(5);
+        v_little.push_back(1);
+        v_little.push_back(2);
+        v_less.push_back(1);
+        v_less.push_back(2);
+        v_less.push_back(0);
+        v_greater.push_back(1);
+        v_greater.push_back(2);
+        v_greater.push_back(4);
+        v_repeatable.push_back(1);
+        v_repeatable.push_back(1);
+        v_repeatable.push_back(2);
+        v_repeatable.push_back(2);
+        v_repeatable.push_back(3);
+        v_repeatable.push_back(3);
+    }
 };
 
-TEST_F(VectorTest, push_back_pass_by_const_ref) {
-    v.push_back(num);
-    EXPECT_EQ(v[0].m_value, num.m_value);
+TEST_F(NonMemberTest, equal) {
+    EXPECT_TRUE(v_1 == v_eq);
+    EXPECT_FALSE(v_1 == v_little);
 }
 
-TEST_F(VectorTest, push_back_pass_by_rvalue_ref) {
-    test_int copy = num;
-    v.push_back(std::move(copy));
-    EXPECT_EQ(v[0].m_value, num.m_value);
+TEST_F(NonMemberTest, not_equal) {
+    EXPECT_FALSE(v_1 != v_eq);
+    EXPECT_TRUE(v_1 != v_little);
 }
 
-TEST_F(VectorTest, push_back_multiple_elements) {
-    v.push_back(a);
-    v.push_back(b);
-    v.push_back(c);
-    EXPECT_EQ(v[0].m_value, a.m_value);
-    EXPECT_EQ(v[1].m_value, b.m_value);
-    EXPECT_EQ(v[2].m_value, c.m_value);
-    EXPECT_EQ(v.size(), 3);
+TEST_F(NonMemberTest, less) {
+    EXPECT_FALSE(v_1 < v_eq);
+    EXPECT_FALSE(v_1 < v_little);
+    EXPECT_TRUE(v_1 < v_greater);
+    EXPECT_FALSE(v_1 < v_less);
+    EXPECT_TRUE(v_little < v_1);
 }
 
-TEST_F(VectorTest, pop_back) {
-    v.push_back(a);
-    v.push_back(b);
-    v.push_back(c);
-    v.pop_back();
-    EXPECT_EQ(v[0].m_value, a.m_value);
-    EXPECT_EQ(v[1].m_value, b.m_value);
-    EXPECT_EQ(v.size(), 2);
+TEST_F(NonMemberTest, less_or_equal) {
+    EXPECT_TRUE(v_1 <= v_eq);
+    EXPECT_FALSE(v_1 <= v_little);
+    EXPECT_TRUE(v_1 <= v_greater);
+    EXPECT_FALSE(v_1 <= v_less);
+    EXPECT_TRUE(v_little <= v_1);
 }
 
-TEST_F(VectorTest, change_element) {
-    v.push_back(a);
-    v.push_back(b);
-    v.push_back(c);
-    v[1] = test_int(4);
-    EXPECT_EQ(v[0].m_value, a.m_value);
-    EXPECT_EQ(v[1].m_value, 4);
-    EXPECT_EQ(v[2].m_value, c.m_value);
+TEST_F(NonMemberTest, greater) {
+    EXPECT_FALSE(v_1 > v_eq);
+    EXPECT_TRUE(v_1 > v_little);
+    EXPECT_FALSE(v_1 > v_greater);
+    EXPECT_TRUE(v_1 > v_less);
+    EXPECT_FALSE(v_little > v_1);
 }
 
-TEST_F(VectorTest, many_push_back) {
-    const int n = 1000;
-    for (int i = 0; i < n; ++i) {
-        v.push_back(test_int(i));
-    }
-    for (int i = 0; i < n; ++i) {
-        EXPECT_EQ(v[i].m_value, i);
-    }
-    EXPECT_EQ(v.size(), 1000);
-    const int m = 10000;
-    for (int i = n; i < m; ++i) {
-        v.push_back(test_int(i));
-    }
-    for (int i = 0; i < m; ++i) {
-        EXPECT_EQ(v[i].m_value, i);
-    }
-    EXPECT_EQ(v.size(), 10000);
+TEST_F(NonMemberTest, greater_or_equal) {
+    EXPECT_TRUE(v_1 >= v_eq);
+    EXPECT_TRUE(v_1 >= v_little);
+    EXPECT_FALSE(v_1 >= v_greater);
+    EXPECT_TRUE(v_1 >= v_less);
+    EXPECT_FALSE(v_little >= v_1);
+}
+
+TEST_F(NonMemberTest, swap) {
+    std::swap(v_1, v_eq);
+    EXPECT_TRUE(v_1 == v_eq);
+    std::swap(v_1, v_little);
+    EXPECT_EQ(v_1[0], 1);
+    EXPECT_EQ(v_1[1], 2);
+    EXPECT_EQ(v_little[0], 1);
+    EXPECT_EQ(v_little[1], 2);
+    EXPECT_EQ(v_little[2], 3);
+    EXPECT_EQ(v_little[3], 4);
+    EXPECT_EQ(v_little[4], 5);
 }
 }  // namespace
+
+// TODO tests for incomplete types
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
