@@ -244,6 +244,78 @@ TEST_F(MutableIteratorTest, use_std_sort) {
 
 // Vector testing
 namespace {
+class ConstructorsTest : public testing::Test {
+protected:
+    vector<test_int> v;
+    vector<test_int> v_short;
+
+    ConstructorsTest() {
+        v.push_back(1);
+        v.push_back(2);
+        v.push_back(3);
+        v.push_back(4);
+        v.push_back(5);
+        v_short.push_back(1);
+        v_short.push_back(2);
+    }
+};
+
+TEST_F(ConstructorsTest, assign_operator) {
+    v_short = v;
+    EXPECT_EQ(v_short.size(), 5);
+    for (size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(v_short[i].m_value, v[i].m_value);
+    }
+    v_short = v_short;
+    EXPECT_EQ(v_short.size(), 5);
+    for (size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(v_short[i].m_value, v[i].m_value);
+    }
+}
+
+TEST_F(ConstructorsTest, move_assign_operator) {
+    v_short = std::move(v);
+    EXPECT_EQ(v_short.size(), 5);
+    for (size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(v_short[i].m_value, i + 1);
+    }
+    v_short = std::move(v_short);
+    EXPECT_EQ(v_short.size(), 5);
+    for (size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(v_short[i].m_value, i + 1);
+    }
+}
+
+TEST_F(ConstructorsTest, assign) {
+    v.assign(2, 123);
+    EXPECT_EQ(v.size(), 2);
+    EXPECT_EQ(v[0].m_value, 123);
+    EXPECT_EQ(v[1].m_value, 123);
+    v.assign(5, 52);
+    EXPECT_EQ(v.size(), 5);
+    EXPECT_EQ(v[0].m_value, 52);
+    EXPECT_EQ(v[1].m_value, 52);
+    EXPECT_EQ(v[2].m_value, 52);
+    EXPECT_EQ(v[3].m_value, 52);
+    EXPECT_EQ(v[4].m_value, 52);
+    v.assign(v_short.begin(), v_short.end());
+    EXPECT_EQ(v.size(), 2);
+    EXPECT_EQ(v[0].m_value, 1);
+    EXPECT_EQ(v[1].m_value, 2);
+    v.assign({1, 2, 3, 4, 5});
+    EXPECT_EQ(v.size(), 5);
+    EXPECT_EQ(v[0].m_value, 1);
+    EXPECT_EQ(v[1].m_value, 2);
+    EXPECT_EQ(v[2].m_value, 3);
+    EXPECT_EQ(v[3].m_value, 4);
+    EXPECT_EQ(v[4].m_value, 5);
+}
+
+TEST_F(ConstructorsTest, get_allocator) {
+    auto alloc = v.get_allocator();
+    EXPECT_TRUE(alloc == std::allocator<test_int>());
+}
+
 class AccessTest : public testing::Test {
 protected:
     vector<test_int> v;

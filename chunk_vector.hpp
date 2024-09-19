@@ -220,16 +220,32 @@ public:
     // delete copy constructor
     chunk_vector(const chunk_vector &other) = delete;
 
-    // delete copy assignment
-    chunk_vector &operator=(const chunk_vector &other) = delete;
-
     chunk_vector(chunk_vector &&other) noexcept
         : v_size(std::exchange(other.v_size, 0)),
           v_chunks(std::move(other.v_chunks)) {
     }
 
-    // delete move assignment
-    chunk_vector &operator=(chunk_vector &&other) = delete;
+    chunk_vector &operator=(const chunk_vector &other) {
+        if (this == &other) {
+            return *this;
+        }
+        assign(other.begin(), other.end());
+        return *this;
+    }
+
+    chunk_vector &operator=(chunk_vector &&other) noexcept {
+        if (this == &other) {
+            return *this;
+        }
+        std::swap(v_size, other.v_size);
+        v_chunks.swap(other.v_chunks);
+        return *this;
+    }
+
+    chunk_vector &operator=(std::initializer_list<value_type> ilist) {
+        assign(ilist.begin(), ilist.end());
+        return *this;
+    }
 
     ~chunk_vector() {
         for (size_type i = 0; i < v_size; ++i) {
@@ -238,6 +254,51 @@ public:
         for (pointer chunk : v_chunks) {
             allocator_type().deallocate(chunk, chunk_size);
         }
+    }
+
+    void assign(size_type count, const_reference value) & {
+        size_type old_size = v_size;
+        resize(count, value);
+        for (size_type i = 0; i < std::min(old_size, v_size); ++i) {
+            operator[](i) = value;
+        }
+    }
+
+    template <
+        class InputIt,
+        std::enable_if_t<
+            std::is_base_of_v<
+                std::input_iterator_tag,
+                typename std::iterator_traits<InputIt>::iterator_category>,
+            bool> = true>
+    void assign(InputIt first, InputIt last) {
+        size_type count = std::distance(first, last);
+
+        if (count <= v_size) {
+            while (count < v_size) {
+                pop_back();
+            }
+            for (size_type i = 0; i < v_size; ++i) {
+                operator[](i) = *(first++);
+            }
+        } else {
+            reserve(count);
+            for (size_type i = 0; i < v_size; ++i) {
+                operator[](i) = *(first++);
+            }
+            for (size_type i = v_size; i < count; ++i) {
+                new (get_ptr_by_index(i)) value_type(*(first++));
+                ++v_size;
+            }
+        }
+    }
+
+    void assign(std::initializer_list<value_type> ilist) {
+        assign(ilist.begin(), ilist.end());
+    }
+
+    allocator_type get_allocator() const noexcept {
+        return allocator_type();
     }
 
     // Element access
@@ -449,7 +510,8 @@ public:
         return iterator(this, pos - begin());
     }
 
-    iterator insert(const_iterator pos, std::initializer_list<T> ilist) & {
+    iterator insert(const_iterator pos, std::initializer_list<value_type> ilist)
+        & {
         return insert(pos, ilist.begin(), ilist.end());
     }
 
