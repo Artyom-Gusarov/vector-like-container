@@ -1,14 +1,95 @@
 #ifndef CHUNK_VECTOR_HPP
 #define CHUNK_VECTOR_HPP
+#include <limits>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 namespace CustomVector {
+template <typename T, typename Alloc, typename>
+struct alloc_wrapper {
+private:
+    Alloc alloc;
+
+public:
+    alloc_wrapper() : alloc() {
+    }
+
+    alloc_wrapper(const Alloc &alloc) : alloc(alloc) {
+    }
+
+    alloc_wrapper(Alloc &&moved_alloc) : alloc(std::move(moved_alloc)) {
+    }
+
+    T *allocate(std::size_t n) {
+        return std::allocator_traits<Alloc>::allocate(alloc, n);
+    }
+
+    void deallocate(T *p, std::size_t n) {
+        std::allocator_traits<Alloc>::deallocate(alloc, p, n);
+    }
+
+    template <typename... Args>
+    void construct(T *p, Args &&...args) {
+        std::allocator_traits<Alloc>::construct(
+            alloc, p, std::forward<Args>(args)...
+        );
+    }
+
+    Alloc get_alloc_copy() const {
+        return alloc;
+    }
+
+    Alloc &get_alloc_ref() {
+        return alloc;
+    }
+};
+
+// Specialization for stateless allocators
+template <typename T, typename Alloc>
+struct alloc_wrapper<
+    T,
+    Alloc,
+    std::enable_if_t<std::allocator_traits<Alloc>::is_always_equal::value>> {
+    alloc_wrapper() = default;
+
+    alloc_wrapper(const Alloc &){};
+
+    alloc_wrapper(Alloc &&){};
+
+    static T *allocate(std::size_t n) {
+        auto tmp = Alloc();
+        return std::allocator_traits<Alloc>::allocate(tmp, n);
+    }
+
+    static void deallocate(T *p, std::size_t n) {
+        auto tmp = Alloc();
+        std::allocator_traits<Alloc>::deallocate(tmp, p, n);
+    }
+
+    template <typename... Args>
+    static void construct(T *p, Args &&...args) {
+        auto tmp = Alloc();
+        std::allocator_traits<Alloc>::construct(
+            tmp, p, std::forward<Args>(args)...
+        );
+    }
+
+    static Alloc get_alloc_copy() {
+        return Alloc();
+    }
+
+    static Alloc &get_alloc_ref() {
+        static Alloc alloc;
+        return alloc;
+    }
+};
+
 template <
     typename T,
     std::size_t chunk_size = 4096 / sizeof(T),
     typename Alloc = std::allocator<T>>
-class chunk_vector {
+class chunk_vector : private alloc_wrapper<T, Alloc, void> {
 private:
     template <bool is_const>
     class chunk_iterator {
@@ -202,27 +283,78 @@ private:
 
 public:
     // Constructors
-    chunk_vector() : v_size(0) {
+    chunk_vector() noexcept(noexcept(std::vector<pointer>())) : v_size(0) {
     }
 
-    explicit chunk_vector(size_type n) : v_size(0) {
-        for (size_type i = 0; i < n; ++i) {
-            push_back(value_type());
-        }
+    explicit chunk_vector(const allocator_type &alloc) noexcept
+        : alloc_wrapper<T, Alloc, void>(alloc), v_size(0) {
     }
 
-    chunk_vector(size_type n, const_reference t) : v_size(0) {
-        for (size_type i = 0; i < n; ++i) {
-            push_back(t);
-        }
+    chunk_vector(
+        size_type count,
+        const_reference value,
+        const allocator_type &alloc = allocator_type()
+    )
+        : alloc_wrapper<T, Alloc, void>(alloc), v_size(0) {
+        resize(count, value);
     }
 
-    // delete copy constructor
-    chunk_vector(const chunk_vector &other) = delete;
+    explicit chunk_vector(
+        size_type count,
+        const allocator_type &alloc = allocator_type()
+    )
+        : alloc_wrapper<T, Alloc, void>(alloc), v_size(0) {
+        resize(count);
+    }
+
+    template <
+        class InputIt,
+        std::enable_if_t<
+            std::is_base_of_v<
+                std::input_iterator_tag,
+                typename std::iterator_traits<InputIt>::iterator_category>,
+            bool> = true>
+    chunk_vector(
+        InputIt first,
+        InputIt last,
+        const allocator_type &alloc = allocator_type()
+    )
+        : alloc_wrapper<T, Alloc, void>(alloc), v_size(0) {
+        assign(first, last);
+    }
+
+    chunk_vector(const chunk_vector &other)
+        : chunk_vector(
+              other.begin(),
+              other.end(),
+              std::allocator_traits<allocator_type>::
+                  select_on_container_copy_construction(other.get_allocator())
+          ) {
+    }
+
+    chunk_vector(const chunk_vector &other, const allocator_type &alloc)
+        : chunk_vector(other.begin(), other.end(), alloc) {
+    }
 
     chunk_vector(chunk_vector &&other) noexcept
-        : v_size(std::exchange(other.v_size, 0)),
+        : alloc_wrapper<T, Alloc, void>(std::move(other.get_alloc_ref())),
+          v_size(std::exchange(other.v_size, 0)),
           v_chunks(std::move(other.v_chunks)) {
+    }
+
+    chunk_vector(chunk_vector &&other, const allocator_type &alloc)
+        : alloc_wrapper<T, Alloc, void>(alloc), v_size(0) {
+        reserve(other.v_size);
+        for (; v_size < other.v_size; ++v_size) {
+            new (get_ptr_by_index(v_size)) value_type(std::move(other[v_size]));
+        }
+    }
+
+    chunk_vector(
+        std::initializer_list<value_type> init,
+        const allocator_type &alloc = allocator_type()
+    )
+        : chunk_vector(init.begin(), init.end(), alloc) {
     }
 
     chunk_vector &operator=(const chunk_vector &other) {
@@ -252,7 +384,7 @@ public:
             this->operator[](i).~value_type();
         }
         for (pointer chunk : v_chunks) {
-            allocator_type().deallocate(chunk, chunk_size);
+            this->deallocate(chunk, chunk_size);
         }
     }
 
@@ -298,7 +430,7 @@ public:
     }
 
     allocator_type get_allocator() const noexcept {
-        return allocator_type();
+        return this->get_alloc_copy();
     }
 
     // Element access
@@ -425,7 +557,7 @@ public:
 
     void reserve(size_type k) & {
         while (capacity() < k) {
-            pointer new_chunk = allocator_type().allocate(chunk_size);
+            pointer new_chunk = this->allocate(chunk_size);
             v_chunks.push_back(new_chunk);
         }
     }
@@ -436,7 +568,7 @@ public:
 
     void shrink_to_fit() & {
         while (capacity() - v_size >= chunk_size) {
-            allocator_type().deallocate(v_chunks.back(), chunk_size);
+            this->deallocate(v_chunks.back(), chunk_size);
             v_chunks.pop_back();
         }
         v_chunks.shrink_to_fit();
@@ -519,9 +651,8 @@ public:
     iterator emplace(const_iterator pos, Args &&...args) {
         elements_shift(pos - begin(), 1);
         if (pos == end()) {
-            allocator_type tmp_alloc;
-            std::allocator_traits<allocator_type>::construct(
-                tmp_alloc, get_ptr_by_index(v_size), std::forward<Args>(args)...
+            this->construct(
+                get_ptr_by_index(v_size), std::forward<Args>(args)...
             );
         } else {
             operator[](pos - begin()) = value_type(std::forward<Args>(args)...);
@@ -560,10 +691,7 @@ public:
     reference emplace_back(Args &&...args) {
         reserve(v_size + 1);
         pointer pos_for_new_value = get_ptr_by_index(v_size++);
-        allocator_type tmp_alloc;
-        std::allocator_traits<allocator_type>::construct(
-            tmp_alloc, pos_for_new_value, std::forward<Args>(args)...
-        );
+        this->construct(pos_for_new_value, std::forward<Args>(args)...);
         return back();
     }
 
