@@ -31,18 +31,18 @@
             <td class="headerValue">coverage.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">9</td>
-            <td class="headerCovTableEntry">13</td>
-            <td class="headerCovTableEntryLo">69.2 %</td>
+            <td class="headerCovTableEntry">11</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntryLo">73.3 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2024-09-18 19:42:00</td>
+            <td class="headerValue">2024-09-21 19:04:13</td>
             <td></td>
             <td class="headerItem">Functions:</td>
-            <td class="headerCovTableEntry">31</td>
-            <td class="headerCovTableEntry">54</td>
-            <td class="headerCovTableEntryLo">57.4 %</td>
+            <td class="headerCovTableEntry">38</td>
+            <td class="headerCovTableEntry">61</td>
+            <td class="headerCovTableEntryLo">62.3 %</td>
           </tr>
           <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
         </table>
@@ -215,11 +215,11 @@
 <a name="153"><span class="lineNum">     153 </span>            :       // _GLIBCXX_RESOLVE_LIB_DEFECTS</a>
 <a name="154"><span class="lineNum">     154 </span>            :       // 3035. std::allocator's constructors should be constexpr</a>
 <a name="155"><span class="lineNum">     155 </span>            :       _GLIBCXX20_CONSTEXPR</a>
-<a name="156"><span class="lineNum">     156 </span><span class="lineCov">        600 :       allocator() _GLIBCXX_NOTHROW { }</span></a>
+<a name="156"><span class="lineNum">     156 </span><span class="lineCov">        868 :       allocator() _GLIBCXX_NOTHROW { }</span></a>
 <a name="157"><span class="lineNum">     157 </span>            : </a>
 <a name="158"><span class="lineNum">     158 </span>            :       _GLIBCXX20_CONSTEXPR</a>
-<a name="159"><span class="lineNum">     159 </span><span class="lineCov">          7 :       allocator(const allocator&amp; __a) _GLIBCXX_NOTHROW</span></a>
-<a name="160"><span class="lineNum">     160 </span><span class="lineCov">          7 :       : __allocator_base&lt;_Tp&gt;(__a) { }</span></a>
+<a name="159"><span class="lineNum">     159 </span><span class="lineCov">         37 :       allocator(const allocator&amp; __a) _GLIBCXX_NOTHROW</span></a>
+<a name="160"><span class="lineNum">     160 </span><span class="lineCov">         37 :       : __allocator_base&lt;_Tp&gt;(__a) { }</span></a>
 <a name="161"><span class="lineNum">     161 </span>            : </a>
 <a name="162"><span class="lineNum">     162 </span>            : #if __cplusplus &gt;= 201103L</a>
 <a name="163"><span class="lineNum">     163 </span>            :       // Avoid implicit deprecation.</a>
@@ -233,7 +233,7 @@
 <a name="171"><span class="lineNum">     171 </span>            : #if __cpp_constexpr_dynamic_alloc</a>
 <a name="172"><span class="lineNum">     172 </span>            :       constexpr</a>
 <a name="173"><span class="lineNum">     173 </span>            : #endif</a>
-<a name="174"><span class="lineNum">     174 </span><span class="lineCov">        607 :       ~allocator() _GLIBCXX_NOTHROW { }</span></a>
+<a name="174"><span class="lineNum">     174 </span><span class="lineCov">        905 :       ~allocator() _GLIBCXX_NOTHROW { }</span></a>
 <a name="175"><span class="lineNum">     175 </span>            : </a>
 <a name="176"><span class="lineNum">     176 </span>            : #if __cplusplus &gt; 201703L</a>
 <a name="177"><span class="lineNum">     177 </span>            :       [[nodiscard,__gnu__::__always_inline__]]</a>
@@ -263,8 +263,8 @@
 <a name="201"><span class="lineNum">     201 </span>            : #endif // C++20</a>
 <a name="202"><span class="lineNum">     202 </span>            : </a>
 <a name="203"><span class="lineNum">     203 </span>            :       friend _GLIBCXX20_CONSTEXPR bool</a>
-<a name="204"><span class="lineNum">     204 </span>            :       operator==(const allocator&amp;, const allocator&amp;) _GLIBCXX_NOTHROW</a>
-<a name="205"><span class="lineNum">     205 </span>            :       { return true; }</a>
+<a name="204"><span class="lineNum">     204 </span><span class="lineCov">          1 :       operator==(const allocator&amp;, const allocator&amp;) _GLIBCXX_NOTHROW</span></a>
+<a name="205"><span class="lineNum">     205 </span><span class="lineCov">          1 :       { return true; }</span></a>
 <a name="206"><span class="lineNum">     206 </span>            : </a>
 <a name="207"><span class="lineNum">     207 </span>            : #if __cpp_impl_three_way_comparison &lt; 201907L</a>
 <a name="208"><span class="lineNum">     208 </span>            :       friend _GLIBCXX20_CONSTEXPR bool</a>

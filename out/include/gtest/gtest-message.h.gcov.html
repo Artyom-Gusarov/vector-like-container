@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2024-09-18 19:42:00</td>
+            <td class="headerValue">2024-09-21 19:04:13</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">9</td>
@@ -172,7 +172,7 @@
 <a name="110"><span class="lineNum">     110 </span>            : </a>
 <a name="111"><span class="lineNum">     111 </span>            :   // Streams a non-pointer value to this object.</a>
 <a name="112"><span class="lineNum">     112 </span>            :   template &lt;typename T&gt;</a>
-<a name="113"><span class="lineNum">     113 </span><span class="lineCov">        472 :   inline Message&amp; operator &lt;&lt;(const T&amp; val) {</span></a>
+<a name="113"><span class="lineNum">     113 </span><span class="lineCov">        490 :   inline Message&amp; operator &lt;&lt;(const T&amp; val) {</span></a>
 <a name="114"><span class="lineNum">     114 </span>            :     // Some libraries overload &lt;&lt; for STL containers.  These</a>
 <a name="115"><span class="lineNum">     115 </span>            :     // overloads are defined in the global namespace instead of ::std.</a>
 <a name="116"><span class="lineNum">     116 </span>            :     //</a>
@@ -188,8 +188,8 @@
 <a name="126"><span class="lineNum">     126 </span>            :     // overloads of &lt;&lt; defined in the global namespace and those</a>
 <a name="127"><span class="lineNum">     127 </span>            :     // visible via Koenig lookup are both exposed in this function.</a>
 <a name="128"><span class="lineNum">     128 </span>            :     using ::operator &lt;&lt;;</a>
-<a name="129"><span class="lineNum">     129 </span><span class="lineCov">        472 :     *ss_ &lt;&lt; val;</span></a>
-<a name="130"><span class="lineNum">     130 </span><span class="lineCov">        472 :     return *this;</span></a>
+<a name="129"><span class="lineNum">     129 </span><span class="lineCov">        490 :     *ss_ &lt;&lt; val;</span></a>
+<a name="130"><span class="lineNum">     130 </span><span class="lineCov">        490 :     return *this;</span></a>
 <a name="131"><span class="lineNum">     131 </span>            :   }</a>
 <a name="132"><span class="lineNum">     132 </span>            : </a>
 <a name="133"><span class="lineNum">     133 </span>            :   // Streams a pointer value to this object.</a>
@@ -269,8 +269,8 @@
 <a name="207"><span class="lineNum">     207 </span>            : // ::std::string, ::wstring, or ::std::wstring object, each NUL</a>
 <a name="208"><span class="lineNum">     208 </span>            : // character in it is replaced with &quot;\\0&quot;.</a>
 <a name="209"><span class="lineNum">     209 </span>            : template &lt;typename T&gt;</a>
-<a name="210"><span class="lineNum">     210 </span><span class="lineCov">         81 : std::string StreamableToString(const T&amp; streamable) {</span></a>
-<a name="211"><span class="lineNum">     211 </span><span class="lineCov">        162 :   return (Message() &lt;&lt; streamable).GetString();</span></a>
+<a name="210"><span class="lineNum">     210 </span><span class="lineCov">         99 : std::string StreamableToString(const T&amp; streamable) {</span></a>
+<a name="211"><span class="lineNum">     211 </span><span class="lineCov">        198 :   return (Message() &lt;&lt; streamable).GetString();</span></a>
 <a name="212"><span class="lineNum">     212 </span>            : }</a>
 <a name="213"><span class="lineNum">     213 </span>            : </a>
 <a name="214"><span class="lineNum">     214 </span>            : }  // namespace internal</a>

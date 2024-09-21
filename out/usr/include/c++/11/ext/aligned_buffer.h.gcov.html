@@ -31,18 +31,18 @@
             <td class="headerValue">coverage.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">4</td>
             <td class="headerCovTableEntry">8</td>
-            <td class="headerCovTableEntryLo">50.0 %</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2024-09-18 19:42:00</td>
+            <td class="headerValue">2024-09-21 19:04:13</td>
             <td></td>
             <td class="headerItem">Functions:</td>
-            <td class="headerCovTableEntry">2</td>
-            <td class="headerCovTableEntry">20</td>
-            <td class="headerCovTableEntryLo">10.0 %</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntryLo">25.0 %</td>
           </tr>
           <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
         </table>
@@ -123,20 +123,20 @@
 <a name="61"><span class="lineNum">      61 </span>            :       __aligned_membuf(std::nullptr_t) { }</a>
 <a name="62"><span class="lineNum">      62 </span>            : </a>
 <a name="63"><span class="lineNum">      63 </span>            :       void*</a>
-<a name="64"><span class="lineNum">      64 </span><span class="lineCov">         12 :       _M_addr() noexcept</span></a>
-<a name="65"><span class="lineNum">      65 </span><span class="lineCov">         12 :       { return static_cast&lt;void*&gt;(&amp;_M_storage); }</span></a>
+<a name="64"><span class="lineNum">      64 </span><span class="lineCov">        127 :       _M_addr() noexcept</span></a>
+<a name="65"><span class="lineNum">      65 </span><span class="lineCov">        127 :       { return static_cast&lt;void*&gt;(&amp;_M_storage); }</span></a>
 <a name="66"><span class="lineNum">      66 </span>            : </a>
 <a name="67"><span class="lineNum">      67 </span>            :       const void*</a>
-<a name="68"><span class="lineNum">      68 </span><span class="lineNoCov">          0 :       _M_addr() const noexcept</span></a>
-<a name="69"><span class="lineNum">      69 </span><span class="lineNoCov">          0 :       { return static_cast&lt;const void*&gt;(&amp;_M_storage); }</span></a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineCov">         39 :       _M_addr() const noexcept</span></a>
+<a name="69"><span class="lineNum">      69 </span><span class="lineCov">         39 :       { return static_cast&lt;const void*&gt;(&amp;_M_storage); }</span></a>
 <a name="70"><span class="lineNum">      70 </span>            : </a>
 <a name="71"><span class="lineNum">      71 </span>            :       _Tp*</a>
-<a name="72"><span class="lineNum">      72 </span><span class="lineCov">         12 :       _M_ptr() noexcept</span></a>
-<a name="73"><span class="lineNum">      73 </span><span class="lineCov">         12 :       { return static_cast&lt;_Tp*&gt;(_M_addr()); }</span></a>
+<a name="72"><span class="lineNum">      72 </span><span class="lineCov">        127 :       _M_ptr() noexcept</span></a>
+<a name="73"><span class="lineNum">      73 </span><span class="lineCov">        127 :       { return static_cast&lt;_Tp*&gt;(_M_addr()); }</span></a>
 <a name="74"><span class="lineNum">      74 </span>            : </a>
 <a name="75"><span class="lineNum">      75 </span>            :       const _Tp*</a>
-<a name="76"><span class="lineNum">      76 </span><span class="lineNoCov">          0 :       _M_ptr() const noexcept</span></a>
-<a name="77"><span class="lineNum">      77 </span><span class="lineNoCov">          0 :       { return static_cast&lt;const _Tp*&gt;(_M_addr()); }</span></a>
+<a name="76"><span class="lineNum">      76 </span><span class="lineCov">         39 :       _M_ptr() const noexcept</span></a>
+<a name="77"><span class="lineNum">      77 </span><span class="lineCov">         39 :       { return static_cast&lt;const _Tp*&gt;(_M_addr()); }</span></a>
 <a name="78"><span class="lineNum">      78 </span>            :     };</a>
 <a name="79"><span class="lineNum">      79 </span>            : </a>
 <a name="80"><span class="lineNum">      80 </span>            : #if _GLIBCXX_INLINE_VERSION</a>

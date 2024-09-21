@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2024-09-18 19:42:00</td>
+            <td class="headerValue">2024-09-21 19:04:13</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">33</td>
@@ -221,52 +221,52 @@
 <a name="159"><span class="lineNum">     159 </span>            : class GTestFlagSaver {</a>
 <a name="160"><span class="lineNum">     160 </span>            :  public:</a>
 <a name="161"><span class="lineNum">     161 </span>            :   // The c'tor.</a>
-<a name="162"><span class="lineNum">     162 </span><span class="lineCov">         53 :   GTestFlagSaver() {</span></a>
-<a name="163"><span class="lineNum">     163 </span><span class="lineCov">         53 :     also_run_disabled_tests_ = GTEST_FLAG(also_run_disabled_tests);</span></a>
-<a name="164"><span class="lineNum">     164 </span><span class="lineCov">         53 :     break_on_failure_ = GTEST_FLAG(break_on_failure);</span></a>
-<a name="165"><span class="lineNum">     165 </span><span class="lineCov">         53 :     catch_exceptions_ = GTEST_FLAG(catch_exceptions);</span></a>
-<a name="166"><span class="lineNum">     166 </span><span class="lineCov">         53 :     color_ = GTEST_FLAG(color);</span></a>
-<a name="167"><span class="lineNum">     167 </span><span class="lineCov">         53 :     death_test_style_ = GTEST_FLAG(death_test_style);</span></a>
-<a name="168"><span class="lineNum">     168 </span><span class="lineCov">         53 :     death_test_use_fork_ = GTEST_FLAG(death_test_use_fork);</span></a>
-<a name="169"><span class="lineNum">     169 </span><span class="lineCov">         53 :     fail_fast_ = GTEST_FLAG(fail_fast);</span></a>
-<a name="170"><span class="lineNum">     170 </span><span class="lineCov">         53 :     filter_ = GTEST_FLAG(filter);</span></a>
-<a name="171"><span class="lineNum">     171 </span><span class="lineCov">         53 :     internal_run_death_test_ = GTEST_FLAG(internal_run_death_test);</span></a>
-<a name="172"><span class="lineNum">     172 </span><span class="lineCov">         53 :     list_tests_ = GTEST_FLAG(list_tests);</span></a>
-<a name="173"><span class="lineNum">     173 </span><span class="lineCov">         53 :     output_ = GTEST_FLAG(output);</span></a>
-<a name="174"><span class="lineNum">     174 </span><span class="lineCov">         53 :     brief_ = GTEST_FLAG(brief);</span></a>
-<a name="175"><span class="lineNum">     175 </span><span class="lineCov">         53 :     print_time_ = GTEST_FLAG(print_time);</span></a>
-<a name="176"><span class="lineNum">     176 </span><span class="lineCov">         53 :     print_utf8_ = GTEST_FLAG(print_utf8);</span></a>
-<a name="177"><span class="lineNum">     177 </span><span class="lineCov">         53 :     random_seed_ = GTEST_FLAG(random_seed);</span></a>
-<a name="178"><span class="lineNum">     178 </span><span class="lineCov">         53 :     repeat_ = GTEST_FLAG(repeat);</span></a>
-<a name="179"><span class="lineNum">     179 </span><span class="lineCov">         53 :     shuffle_ = GTEST_FLAG(shuffle);</span></a>
-<a name="180"><span class="lineNum">     180 </span><span class="lineCov">         53 :     stack_trace_depth_ = GTEST_FLAG(stack_trace_depth);</span></a>
-<a name="181"><span class="lineNum">     181 </span><span class="lineCov">         53 :     stream_result_to_ = GTEST_FLAG(stream_result_to);</span></a>
-<a name="182"><span class="lineNum">     182 </span><span class="lineCov">         53 :     throw_on_failure_ = GTEST_FLAG(throw_on_failure);</span></a>
-<a name="183"><span class="lineNum">     183 </span><span class="lineCov">         53 :   }</span></a>
+<a name="162"><span class="lineNum">     162 </span><span class="lineCov">         68 :   GTestFlagSaver() {</span></a>
+<a name="163"><span class="lineNum">     163 </span><span class="lineCov">         68 :     also_run_disabled_tests_ = GTEST_FLAG(also_run_disabled_tests);</span></a>
+<a name="164"><span class="lineNum">     164 </span><span class="lineCov">         68 :     break_on_failure_ = GTEST_FLAG(break_on_failure);</span></a>
+<a name="165"><span class="lineNum">     165 </span><span class="lineCov">         68 :     catch_exceptions_ = GTEST_FLAG(catch_exceptions);</span></a>
+<a name="166"><span class="lineNum">     166 </span><span class="lineCov">         68 :     color_ = GTEST_FLAG(color);</span></a>
+<a name="167"><span class="lineNum">     167 </span><span class="lineCov">         68 :     death_test_style_ = GTEST_FLAG(death_test_style);</span></a>
+<a name="168"><span class="lineNum">     168 </span><span class="lineCov">         68 :     death_test_use_fork_ = GTEST_FLAG(death_test_use_fork);</span></a>
+<a name="169"><span class="lineNum">     169 </span><span class="lineCov">         68 :     fail_fast_ = GTEST_FLAG(fail_fast);</span></a>
+<a name="170"><span class="lineNum">     170 </span><span class="lineCov">         68 :     filter_ = GTEST_FLAG(filter);</span></a>
+<a name="171"><span class="lineNum">     171 </span><span class="lineCov">         68 :     internal_run_death_test_ = GTEST_FLAG(internal_run_death_test);</span></a>
+<a name="172"><span class="lineNum">     172 </span><span class="lineCov">         68 :     list_tests_ = GTEST_FLAG(list_tests);</span></a>
+<a name="173"><span class="lineNum">     173 </span><span class="lineCov">         68 :     output_ = GTEST_FLAG(output);</span></a>
+<a name="174"><span class="lineNum">     174 </span><span class="lineCov">         68 :     brief_ = GTEST_FLAG(brief);</span></a>
+<a name="175"><span class="lineNum">     175 </span><span class="lineCov">         68 :     print_time_ = GTEST_FLAG(print_time);</span></a>
+<a name="176"><span class="lineNum">     176 </span><span class="lineCov">         68 :     print_utf8_ = GTEST_FLAG(print_utf8);</span></a>
+<a name="177"><span class="lineNum">     177 </span><span class="lineCov">         68 :     random_seed_ = GTEST_FLAG(random_seed);</span></a>
+<a name="178"><span class="lineNum">     178 </span><span class="lineCov">         68 :     repeat_ = GTEST_FLAG(repeat);</span></a>
+<a name="179"><span class="lineNum">     179 </span><span class="lineCov">         68 :     shuffle_ = GTEST_FLAG(shuffle);</span></a>
+<a name="180"><span class="lineNum">     180 </span><span class="lineCov">         68 :     stack_trace_depth_ = GTEST_FLAG(stack_trace_depth);</span></a>
+<a name="181"><span class="lineNum">     181 </span><span class="lineCov">         68 :     stream_result_to_ = GTEST_FLAG(stream_result_to);</span></a>
+<a name="182"><span class="lineNum">     182 </span><span class="lineCov">         68 :     throw_on_failure_ = GTEST_FLAG(throw_on_failure);</span></a>
+<a name="183"><span class="lineNum">     183 </span><span class="lineCov">         68 :   }</span></a>
 <a name="184"><span class="lineNum">     184 </span>            : </a>
 <a name="185"><span class="lineNum">     185 </span>            :   // The d'tor is not virtual.  DO NOT INHERIT FROM THIS CLASS.</a>
-<a name="186"><span class="lineNum">     186 </span><span class="lineCov">        318 :   ~GTestFlagSaver() {</span></a>
-<a name="187"><span class="lineNum">     187 </span><span class="lineCov">         53 :     GTEST_FLAG(also_run_disabled_tests) = also_run_disabled_tests_;</span></a>
-<a name="188"><span class="lineNum">     188 </span><span class="lineCov">         53 :     GTEST_FLAG(break_on_failure) = break_on_failure_;</span></a>
-<a name="189"><span class="lineNum">     189 </span><span class="lineCov">         53 :     GTEST_FLAG(catch_exceptions) = catch_exceptions_;</span></a>
-<a name="190"><span class="lineNum">     190 </span><span class="lineCov">         53 :     GTEST_FLAG(color) = color_;</span></a>
-<a name="191"><span class="lineNum">     191 </span><span class="lineCov">         53 :     GTEST_FLAG(death_test_style) = death_test_style_;</span></a>
-<a name="192"><span class="lineNum">     192 </span><span class="lineCov">         53 :     GTEST_FLAG(death_test_use_fork) = death_test_use_fork_;</span></a>
-<a name="193"><span class="lineNum">     193 </span><span class="lineCov">         53 :     GTEST_FLAG(filter) = filter_;</span></a>
-<a name="194"><span class="lineNum">     194 </span><span class="lineCov">         53 :     GTEST_FLAG(fail_fast) = fail_fast_;</span></a>
-<a name="195"><span class="lineNum">     195 </span><span class="lineCov">         53 :     GTEST_FLAG(internal_run_death_test) = internal_run_death_test_;</span></a>
-<a name="196"><span class="lineNum">     196 </span><span class="lineCov">         53 :     GTEST_FLAG(list_tests) = list_tests_;</span></a>
-<a name="197"><span class="lineNum">     197 </span><span class="lineCov">         53 :     GTEST_FLAG(output) = output_;</span></a>
-<a name="198"><span class="lineNum">     198 </span><span class="lineCov">         53 :     GTEST_FLAG(brief) = brief_;</span></a>
-<a name="199"><span class="lineNum">     199 </span><span class="lineCov">         53 :     GTEST_FLAG(print_time) = print_time_;</span></a>
-<a name="200"><span class="lineNum">     200 </span><span class="lineCov">         53 :     GTEST_FLAG(print_utf8) = print_utf8_;</span></a>
-<a name="201"><span class="lineNum">     201 </span><span class="lineCov">         53 :     GTEST_FLAG(random_seed) = random_seed_;</span></a>
-<a name="202"><span class="lineNum">     202 </span><span class="lineCov">         53 :     GTEST_FLAG(repeat) = repeat_;</span></a>
-<a name="203"><span class="lineNum">     203 </span><span class="lineCov">         53 :     GTEST_FLAG(shuffle) = shuffle_;</span></a>
-<a name="204"><span class="lineNum">     204 </span><span class="lineCov">         53 :     GTEST_FLAG(stack_trace_depth) = stack_trace_depth_;</span></a>
-<a name="205"><span class="lineNum">     205 </span><span class="lineCov">         53 :     GTEST_FLAG(stream_result_to) = stream_result_to_;</span></a>
-<a name="206"><span class="lineNum">     206 </span><span class="lineCov">         53 :     GTEST_FLAG(throw_on_failure) = throw_on_failure_;</span></a>
-<a name="207"><span class="lineNum">     207 </span><span class="lineCov">        318 :   }</span></a>
+<a name="186"><span class="lineNum">     186 </span><span class="lineCov">        408 :   ~GTestFlagSaver() {</span></a>
+<a name="187"><span class="lineNum">     187 </span><span class="lineCov">         68 :     GTEST_FLAG(also_run_disabled_tests) = also_run_disabled_tests_;</span></a>
+<a name="188"><span class="lineNum">     188 </span><span class="lineCov">         68 :     GTEST_FLAG(break_on_failure) = break_on_failure_;</span></a>
+<a name="189"><span class="lineNum">     189 </span><span class="lineCov">         68 :     GTEST_FLAG(catch_exceptions) = catch_exceptions_;</span></a>
+<a name="190"><span class="lineNum">     190 </span><span class="lineCov">         68 :     GTEST_FLAG(color) = color_;</span></a>
+<a name="191"><span class="lineNum">     191 </span><span class="lineCov">         68 :     GTEST_FLAG(death_test_style) = death_test_style_;</span></a>
+<a name="192"><span class="lineNum">     192 </span><span class="lineCov">         68 :     GTEST_FLAG(death_test_use_fork) = death_test_use_fork_;</span></a>
+<a name="193"><span class="lineNum">     193 </span><span class="lineCov">         68 :     GTEST_FLAG(filter) = filter_;</span></a>
+<a name="194"><span class="lineNum">     194 </span><span class="lineCov">         68 :     GTEST_FLAG(fail_fast) = fail_fast_;</span></a>
+<a name="195"><span class="lineNum">     195 </span><span class="lineCov">         68 :     GTEST_FLAG(internal_run_death_test) = internal_run_death_test_;</span></a>
+<a name="196"><span class="lineNum">     196 </span><span class="lineCov">         68 :     GTEST_FLAG(list_tests) = list_tests_;</span></a>
+<a name="197"><span class="lineNum">     197 </span><span class="lineCov">         68 :     GTEST_FLAG(output) = output_;</span></a>
+<a name="198"><span class="lineNum">     198 </span><span class="lineCov">         68 :     GTEST_FLAG(brief) = brief_;</span></a>
+<a name="199"><span class="lineNum">     199 </span><span class="lineCov">         68 :     GTEST_FLAG(print_time) = print_time_;</span></a>
+<a name="200"><span class="lineNum">     200 </span><span class="lineCov">         68 :     GTEST_FLAG(print_utf8) = print_utf8_;</span></a>
+<a name="201"><span class="lineNum">     201 </span><span class="lineCov">         68 :     GTEST_FLAG(random_seed) = random_seed_;</span></a>
+<a name="202"><span class="lineNum">     202 </span><span class="lineCov">         68 :     GTEST_FLAG(repeat) = repeat_;</span></a>
+<a name="203"><span class="lineNum">     203 </span><span class="lineCov">         68 :     GTEST_FLAG(shuffle) = shuffle_;</span></a>
+<a name="204"><span class="lineNum">     204 </span><span class="lineCov">         68 :     GTEST_FLAG(stack_trace_depth) = stack_trace_depth_;</span></a>
+<a name="205"><span class="lineNum">     205 </span><span class="lineCov">         68 :     GTEST_FLAG(stream_result_to) = stream_result_to_;</span></a>
+<a name="206"><span class="lineNum">     206 </span><span class="lineCov">         68 :     GTEST_FLAG(throw_on_failure) = throw_on_failure_;</span></a>
+<a name="207"><span class="lineNum">     207 </span><span class="lineCov">        408 :   }</span></a>
 <a name="208"><span class="lineNum">     208 </span>            : </a>
 <a name="209"><span class="lineNum">     209 </span>            :  private:</a>
 <a name="210"><span class="lineNum">     210 </span>            :   // Fields for saving the original values of flags.</a>
@@ -348,29 +348,29 @@
 <a name="286"><span class="lineNum">     286 </span>            : // Returns the number of elements in the given container that satisfy</a>
 <a name="287"><span class="lineNum">     287 </span>            : // the given predicate.</a>
 <a name="288"><span class="lineNum">     288 </span>            : template &lt;class Container, typename Predicate&gt;</a>
-<a name="289"><span class="lineNum">     289 </span><span class="lineCov">        440 : inline int CountIf(const Container&amp; c, Predicate predicate) {</span></a>
+<a name="289"><span class="lineNum">     289 </span><span class="lineCov">        554 : inline int CountIf(const Container&amp; c, Predicate predicate) {</span></a>
 <a name="290"><span class="lineNum">     290 </span>            :   // Implemented as an explicit loop since std::count_if() in libCstd on</a>
 <a name="291"><span class="lineNum">     291 </span>            :   // Solaris has a non-standard signature.</a>
-<a name="292"><span class="lineNum">     292 </span><span class="lineCov">        440 :   int count = 0;</span></a>
-<a name="293"><span class="lineNum">     293 </span><span class="lineCov">        945 :   for (typename Container::const_iterator it = c.begin(); it != c.end(); ++it) {</span></a>
-<a name="294"><span class="lineNum">     294 </span><span class="lineCov">        505 :     if (predicate(*it))</span></a>
-<a name="295"><span class="lineNum">     295 </span><span class="lineCov">        279 :       ++count;</span></a>
+<a name="292"><span class="lineNum">     292 </span><span class="lineCov">        554 :   int count = 0;</span></a>
+<a name="293"><span class="lineNum">     293 </span><span class="lineCov">       1198 :   for (typename Container::const_iterator it = c.begin(); it != c.end(); ++it) {</span></a>
+<a name="294"><span class="lineNum">     294 </span><span class="lineCov">        644 :     if (predicate(*it))</span></a>
+<a name="295"><span class="lineNum">     295 </span><span class="lineCov">        356 :       ++count;</span></a>
 <a name="296"><span class="lineNum">     296 </span>            :   }</a>
-<a name="297"><span class="lineNum">     297 </span><span class="lineCov">        440 :   return count;</span></a>
+<a name="297"><span class="lineNum">     297 </span><span class="lineCov">        554 :   return count;</span></a>
 <a name="298"><span class="lineNum">     298 </span>            : }</a>
 <a name="299"><span class="lineNum">     299 </span>            : </a>
 <a name="300"><span class="lineNum">     300 </span>            : // Applies a function/functor to each element in the container.</a>
 <a name="301"><span class="lineNum">     301 </span>            : template &lt;class Container, typename Functor&gt;</a>
-<a name="302"><span class="lineNum">     302 </span><span class="lineCov">         19 : void ForEach(const Container&amp; c, Functor functor) {</span></a>
-<a name="303"><span class="lineNum">     303 </span><span class="lineCov">         19 :   std::for_each(c.begin(), c.end(), functor);</span></a>
-<a name="304"><span class="lineNum">     304 </span><span class="lineCov">         19 : }</span></a>
+<a name="302"><span class="lineNum">     302 </span><span class="lineCov">         21 : void ForEach(const Container&amp; c, Functor functor) {</span></a>
+<a name="303"><span class="lineNum">     303 </span><span class="lineCov">         21 :   std::for_each(c.begin(), c.end(), functor);</span></a>
+<a name="304"><span class="lineNum">     304 </span><span class="lineCov">         21 : }</span></a>
 <a name="305"><span class="lineNum">     305 </span>            : </a>
 <a name="306"><span class="lineNum">     306 </span>            : // Returns the i-th element of the vector, or default_value if i is not</a>
 <a name="307"><span class="lineNum">     307 </span>            : // in range [0, v.size()).</a>
 <a name="308"><span class="lineNum">     308 </span>            : template &lt;typename E&gt;</a>
-<a name="309"><span class="lineNum">     309 </span><span class="lineCov">         60 : inline E GetElementOr(const std::vector&lt;E&gt;&amp; v, int i, E default_value) {</span></a>
-<a name="310"><span class="lineNum">     310 </span><span class="lineCov">        120 :   return (i &lt; 0 || i &gt;= static_cast&lt;int&gt;(v.size())) ? default_value</span></a>
-<a name="311"><span class="lineNum">     311 </span><span class="lineCov">        120 :                                                     : v[static_cast&lt;size_t&gt;(i)];</span></a>
+<a name="309"><span class="lineNum">     309 </span><span class="lineCov">         76 : inline E GetElementOr(const std::vector&lt;E&gt;&amp; v, int i, E default_value) {</span></a>
+<a name="310"><span class="lineNum">     310 </span><span class="lineCov">        152 :   return (i &lt; 0 || i &gt;= static_cast&lt;int&gt;(v.size())) ? default_value</span></a>
+<a name="311"><span class="lineNum">     311 </span><span class="lineCov">        152 :                                                     : v[static_cast&lt;size_t&gt;(i)];</span></a>
 <a name="312"><span class="lineNum">     312 </span>            : }</a>
 <a name="313"><span class="lineNum">     313 </span>            : </a>
 <a name="314"><span class="lineNum">     314 </span>            : // Performs an in-place shuffle of a range of the vector's elements.</a>
@@ -409,9 +409,9 @@
 <a name="347"><span class="lineNum">     347 </span>            : // A function for deleting an object.  Handy for being used as a</a>
 <a name="348"><span class="lineNum">     348 </span>            : // functor.</a>
 <a name="349"><span class="lineNum">     349 </span>            : template &lt;typename T&gt;</a>
-<a name="350"><span class="lineNum">     350 </span><span class="lineCov">         61 : static void Delete(T* x) {</span></a>
-<a name="351"><span class="lineNum">     351 </span><span class="lineCov">         61 :   delete x;</span></a>
-<a name="352"><span class="lineNum">     352 </span><span class="lineCov">         61 : }</span></a>
+<a name="350"><span class="lineNum">     350 </span><span class="lineCov">         77 : static void Delete(T* x) {</span></a>
+<a name="351"><span class="lineNum">     351 </span><span class="lineCov">         77 :   delete x;</span></a>
+<a name="352"><span class="lineNum">     352 </span><span class="lineCov">         77 : }</span></a>
 <a name="353"><span class="lineNum">     353 </span>            : </a>
 <a name="354"><span class="lineNum">     354 </span>            : // A predicate that checks the key of a TestProperty against a known key.</a>
 <a name="355"><span class="lineNum">     355 </span>            : //</a>
@@ -665,13 +665,13 @@
 <a name="603"><span class="lineNum">     603 </span>            : </a>
 <a name="604"><span class="lineNum">     604 </span>            :   // Gets the i-th test suite among all the test suites. i can range from 0 to</a>
 <a name="605"><span class="lineNum">     605 </span>            :   // total_test_suite_count() - 1. If i is not in that range, returns NULL.</a>
-<a name="606"><span class="lineNum">     606 </span><span class="lineCov">          7 :   TestSuite* GetMutableSuiteCase(int i) {</span></a>
-<a name="607"><span class="lineNum">     607 </span><span class="lineCov">          7 :     const int index = GetElementOr(test_suite_indices_, i, -1);</span></a>
-<a name="608"><span class="lineNum">     608 </span><span class="lineCov">          7 :     return index &lt; 0 ? nullptr : test_suites_[static_cast&lt;size_t&gt;(index)];</span></a>
+<a name="606"><span class="lineNum">     606 </span><span class="lineCov">          8 :   TestSuite* GetMutableSuiteCase(int i) {</span></a>
+<a name="607"><span class="lineNum">     607 </span><span class="lineCov">          8 :     const int index = GetElementOr(test_suite_indices_, i, -1);</span></a>
+<a name="608"><span class="lineNum">     608 </span><span class="lineCov">          8 :     return index &lt; 0 ? nullptr : test_suites_[static_cast&lt;size_t&gt;(index)];</span></a>
 <a name="609"><span class="lineNum">     609 </span>            :   }</a>
 <a name="610"><span class="lineNum">     610 </span>            : </a>
 <a name="611"><span class="lineNum">     611 </span>            :   // Provides access to the event listener list.</a>
-<a name="612"><span class="lineNum">     612 </span><span class="lineCov">         62 :   TestEventListeners* listeners() { return &amp;listeners_; }</span></a>
+<a name="612"><span class="lineNum">     612 </span><span class="lineCov">         78 :   TestEventListeners* listeners() { return &amp;listeners_; }</span></a>
 <a name="613"><span class="lineNum">     613 </span>            : </a>
 <a name="614"><span class="lineNum">     614 </span>            :   // Returns the TestResult for the test that's currently running, or</a>
 <a name="615"><span class="lineNum">     615 </span>            :   // the TestResult for the ad hoc test if no test is running.</a>
@@ -734,7 +734,7 @@
 <a name="672"><span class="lineNum">     672 </span>            :   //   set_up_tc:    pointer to the function that sets up the test suite</a>
 <a name="673"><span class="lineNum">     673 </span>            :   //   tear_down_tc: pointer to the function that tears down the test suite</a>
 <a name="674"><span class="lineNum">     674 </span>            :   //   test_info:    the TestInfo object</a>
-<a name="675"><span class="lineNum">     675 </span><span class="lineCov">         53 :   void AddTestInfo(internal::SetUpTestSuiteFunc set_up_tc,</span></a>
+<a name="675"><span class="lineNum">     675 </span><span class="lineCov">         68 :   void AddTestInfo(internal::SetUpTestSuiteFunc set_up_tc,</span></a>
 <a name="676"><span class="lineNum">     676 </span>            :                    internal::TearDownTestSuiteFunc tear_down_tc,</a>
 <a name="677"><span class="lineNum">     677 </span>            :                    TestInfo* test_info) {</a>
 <a name="678"><span class="lineNum">     678 </span>            : #if GTEST_HAS_DEATH_TEST</a>
@@ -745,17 +745,17 @@
 <a name="683"><span class="lineNum">     683 </span>            :     // RUN_ALL_TESTS().  Therefore we capture the current directory in</a>
 <a name="684"><span class="lineNum">     684 </span>            :     // AddTestInfo(), which is called to register a TEST or TEST_F</a>
 <a name="685"><span class="lineNum">     685 </span>            :     // before main() is reached.</a>
-<a name="686"><span class="lineNum">     686 </span><span class="lineCov">         53 :     if (original_working_dir_.IsEmpty()) {</span></a>
+<a name="686"><span class="lineNum">     686 </span><span class="lineCov">         68 :     if (original_working_dir_.IsEmpty()) {</span></a>
 <a name="687"><span class="lineNum">     687 </span><span class="lineCov">          1 :       original_working_dir_.Set(FilePath::GetCurrentDir());</span></a>
 <a name="688"><span class="lineNum">     688 </span><span class="lineCov">          1 :       GTEST_CHECK_(!original_working_dir_.IsEmpty())</span></a>
 <a name="689"><span class="lineNum">     689 </span><span class="lineNoCov">          0 :           &lt;&lt; &quot;Failed to get the current working directory.&quot;;</span></a>
 <a name="690"><span class="lineNum">     690 </span>            :     }</a>
 <a name="691"><span class="lineNum">     691 </span>            : #endif  // GTEST_HAS_DEATH_TEST</a>
 <a name="692"><span class="lineNum">     692 </span>            : </a>
-<a name="693"><span class="lineNum">     693 </span><span class="lineCov">         53 :     GetTestSuite(test_info-&gt;test_suite_name(), test_info-&gt;type_param(),</span></a>
+<a name="693"><span class="lineNum">     693 </span><span class="lineCov">         68 :     GetTestSuite(test_info-&gt;test_suite_name(), test_info-&gt;type_param(),</span></a>
 <a name="694"><span class="lineNum">     694 </span>            :                  set_up_tc, tear_down_tc)</a>
-<a name="695"><span class="lineNum">     695 </span><span class="lineCov">         53 :         -&gt;AddTestInfo(test_info);</span></a>
-<a name="696"><span class="lineNum">     696 </span><span class="lineCov">         53 :   }</span></a>
+<a name="695"><span class="lineNum">     695 </span><span class="lineCov">         68 :         -&gt;AddTestInfo(test_info);</span></a>
+<a name="696"><span class="lineNum">     696 </span><span class="lineCov">         68 :   }</span></a>
 <a name="697"><span class="lineNum">     697 </span>            : </a>
 <a name="698"><span class="lineNum">     698 </span>            :   // Returns ParameterizedTestSuiteRegistry object used to keep track of</a>
 <a name="699"><span class="lineNum">     699 </span>            :   // value-parameterized tests and instantiate and register them.</a>
@@ -775,16 +775,16 @@
 <a name="713"><span class="lineNum">     713 </span>            :   }</a>
 <a name="714"><span class="lineNum">     714 </span>            : </a>
 <a name="715"><span class="lineNum">     715 </span>            :   // Sets the TestSuite object for the test that's currently running.</a>
-<a name="716"><span class="lineNum">     716 </span><span class="lineCov">         14 :   void set_current_test_suite(TestSuite* a_current_test_suite) {</span></a>
-<a name="717"><span class="lineNum">     717 </span><span class="lineCov">         14 :     current_test_suite_ = a_current_test_suite;</span></a>
-<a name="718"><span class="lineNum">     718 </span><span class="lineCov">         14 :   }</span></a>
+<a name="716"><span class="lineNum">     716 </span><span class="lineCov">         16 :   void set_current_test_suite(TestSuite* a_current_test_suite) {</span></a>
+<a name="717"><span class="lineNum">     717 </span><span class="lineCov">         16 :     current_test_suite_ = a_current_test_suite;</span></a>
+<a name="718"><span class="lineNum">     718 </span><span class="lineCov">         16 :   }</span></a>
 <a name="719"><span class="lineNum">     719 </span>            : </a>
 <a name="720"><span class="lineNum">     720 </span>            :   // Sets the TestInfo object for the test that's currently running.  If</a>
 <a name="721"><span class="lineNum">     721 </span>            :   // current_test_info is NULL, the assertion results will be stored in</a>
 <a name="722"><span class="lineNum">     722 </span>            :   // ad_hoc_test_result_.</a>
-<a name="723"><span class="lineNum">     723 </span><span class="lineCov">        106 :   void set_current_test_info(TestInfo* a_current_test_info) {</span></a>
-<a name="724"><span class="lineNum">     724 </span><span class="lineCov">        106 :     current_test_info_ = a_current_test_info;</span></a>
-<a name="725"><span class="lineNum">     725 </span><span class="lineCov">        106 :   }</span></a>
+<a name="723"><span class="lineNum">     723 </span><span class="lineCov">        136 :   void set_current_test_info(TestInfo* a_current_test_info) {</span></a>
+<a name="724"><span class="lineNum">     724 </span><span class="lineCov">        136 :     current_test_info_ = a_current_test_info;</span></a>
+<a name="725"><span class="lineNum">     725 </span><span class="lineCov">        136 :   }</span></a>
 <a name="726"><span class="lineNum">     726 </span>            : </a>
 <a name="727"><span class="lineNum">     727 </span>            :   // Registers all parameterized tests defined using TEST_P and</a>
 <a name="728"><span class="lineNum">     728 </span>            :   // INSTANTIATE_TEST_SUITE_P, creating regular tests for each test/parameter</a>
@@ -832,8 +832,8 @@
 <a name="770"><span class="lineNum">     770 </span>            :   // Prints the names of the tests matching the user-specified filter flag.</a>
 <a name="771"><span class="lineNum">     771 </span>            :   void ListTestsMatchingFilter();</a>
 <a name="772"><span class="lineNum">     772 </span>            : </a>
-<a name="773"><span class="lineNum">     773 </span><span class="lineCov">         53 :   const TestSuite* current_test_suite() const { return current_test_suite_; }</span></a>
-<a name="774"><span class="lineNum">     774 </span><span class="lineCov">         53 :   TestInfo* current_test_info() { return current_test_info_; }</span></a>
+<a name="773"><span class="lineNum">     773 </span><span class="lineCov">         68 :   const TestSuite* current_test_suite() const { return current_test_suite_; }</span></a>
+<a name="774"><span class="lineNum">     774 </span><span class="lineCov">         68 :   TestInfo* current_test_info() { return current_test_info_; }</span></a>
 <a name="775"><span class="lineNum">     775 </span><span class="lineNoCov">          0 :   const TestInfo* current_test_info() const { return current_test_info_; }</span></a>
 <a name="776"><span class="lineNum">     776 </span>            : </a>
 <a name="777"><span class="lineNum">     777 </span>            :   // Returns the vector of environments that need to be set-up/torn-down</a>
@@ -902,7 +902,7 @@
 <a name="840"><span class="lineNum">     840 </span>            : </a>
 <a name="841"><span class="lineNum">     841 </span>            :   // Returns the value of GTEST_FLAG(catch_exceptions) at the moment</a>
 <a name="842"><span class="lineNum">     842 </span>            :   // UnitTest::Run() starts.</a>
-<a name="843"><span class="lineNum">     843 </span><span class="lineCov">        280 :   bool catch_exceptions() const { return catch_exceptions_; }</span></a>
+<a name="843"><span class="lineNum">     843 </span><span class="lineCov">        357 :   bool catch_exceptions() const { return catch_exceptions_; }</span></a>
 <a name="844"><span class="lineNum">     844 </span>            : </a>
 <a name="845"><span class="lineNum">     845 </span>            :  private:</a>
 <a name="846"><span class="lineNum">     846 </span>            :   friend class ::testing::UnitTest;</a>
@@ -1030,8 +1030,8 @@
 <a name="968"><span class="lineNum">     968 </span>            : </a>
 <a name="969"><span class="lineNum">     969 </span>            : // Convenience function for accessing the global UnitTest</a>
 <a name="970"><span class="lineNum">     970 </span>            : // implementation object.</a>
-<a name="971"><span class="lineNum">     971 </span><span class="lineCov">        714 : inline UnitTestImpl* GetUnitTestImpl() {</span></a>
-<a name="972"><span class="lineNum">     972 </span><span class="lineCov">        714 :   return UnitTest::GetInstance()-&gt;impl();</span></a>
+<a name="971"><span class="lineNum">     971 </span><span class="lineCov">        912 : inline UnitTestImpl* GetUnitTestImpl() {</span></a>
+<a name="972"><span class="lineNum">     972 </span><span class="lineCov">        912 :   return UnitTest::GetInstance()-&gt;impl();</span></a>
 <a name="973"><span class="lineNum">     973 </span>            : }</a>
 <a name="974"><span class="lineNum">     974 </span>            : </a>
 <a name="975"><span class="lineNum">     975 </span>            : #if GTEST_USES_SIMPLE_RE</a>

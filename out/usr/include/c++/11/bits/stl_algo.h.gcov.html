@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2024-09-18 19:42:00</td>
+            <td class="headerValue">2024-09-21 19:04:13</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">17</td>
@@ -3873,14 +3873,14 @@
 <a name="3811"><span class="lineNum">    3811 </span>            :   template&lt;typename _InputIterator, typename _Function&gt;</a>
 <a name="3812"><span class="lineNum">    3812 </span>            :     _GLIBCXX20_CONSTEXPR</a>
 <a name="3813"><span class="lineNum">    3813 </span>            :     _Function</a>
-<a name="3814"><span class="lineNum">    3814 </span><span class="lineCov">         20 :     for_each(_InputIterator __first, _InputIterator __last, _Function __f)</span></a>
+<a name="3814"><span class="lineNum">    3814 </span><span class="lineCov">         22 :     for_each(_InputIterator __first, _InputIterator __last, _Function __f)</span></a>
 <a name="3815"><span class="lineNum">    3815 </span>            :     {</a>
 <a name="3816"><span class="lineNum">    3816 </span>            :       // concept requirements</a>
 <a name="3817"><span class="lineNum">    3817 </span>            :       __glibcxx_function_requires(_InputIteratorConcept&lt;_InputIterator&gt;)</a>
 <a name="3818"><span class="lineNum">    3818 </span>            :       __glibcxx_requires_valid_range(__first, __last);</a>
-<a name="3819"><span class="lineNum">    3819 </span><span class="lineCov">        141 :       for (; __first != __last; ++__first)</span></a>
-<a name="3820"><span class="lineNum">    3820 </span><span class="lineCov">        121 :         __f(*__first);</span></a>
-<a name="3821"><span class="lineNum">    3821 </span><span class="lineCov">         20 :       return __f; // N.B. [alg.foreach] says std::move(f) but it's redundant.</span></a>
+<a name="3819"><span class="lineNum">    3819 </span><span class="lineCov">        175 :       for (; __first != __last; ++__first)</span></a>
+<a name="3820"><span class="lineNum">    3820 </span><span class="lineCov">        153 :         __f(*__first);</span></a>
+<a name="3821"><span class="lineNum">    3821 </span><span class="lineCov">         22 :       return __f; // N.B. [alg.foreach] says std::move(f) but it's redundant.</span></a>
 <a name="3822"><span class="lineNum">    3822 </span>            :     }</a>
 <a name="3823"><span class="lineNum">    3823 </span>            : </a>
 <a name="3824"><span class="lineNum">    3824 </span>            : #if __cplusplus &gt;= 201703L</a>
@@ -3960,7 +3960,7 @@
 <a name="3898"><span class="lineNum">    3898 </span>            :   template&lt;typename _InputIterator, typename _Predicate&gt;</a>
 <a name="3899"><span class="lineNum">    3899 </span>            :     _GLIBCXX20_CONSTEXPR</a>
 <a name="3900"><span class="lineNum">    3900 </span>            :     inline _InputIterator</a>
-<a name="3901"><span class="lineNum">    3901 </span><span class="lineCov">         53 :     find_if(_InputIterator __first, _InputIterator __last,</span></a>
+<a name="3901"><span class="lineNum">    3901 </span><span class="lineCov">         68 :     find_if(_InputIterator __first, _InputIterator __last,</span></a>
 <a name="3902"><span class="lineNum">    3902 </span>            :             _Predicate __pred)</a>
 <a name="3903"><span class="lineNum">    3903 </span>            :     {</a>
 <a name="3904"><span class="lineNum">    3904 </span>            :       // concept requirements</a>
@@ -3970,7 +3970,7 @@
 <a name="3908"><span class="lineNum">    3908 </span>            :       __glibcxx_requires_valid_range(__first, __last);</a>
 <a name="3909"><span class="lineNum">    3909 </span>            : </a>
 <a name="3910"><span class="lineNum">    3910 </span><span class="lineNoCov">          0 :       return std::__find_if(__first, __last,</span></a>
-<a name="3911"><span class="lineNum">    3911 </span><span class="lineCov">         53 :                             __gnu_cxx::__ops::__pred_iter(__pred));</span></a>
+<a name="3911"><span class="lineNum">    3911 </span><span class="lineCov">         68 :                             __gnu_cxx::__ops::__pred_iter(__pred));</span></a>
 <a name="3912"><span class="lineNum">    3912 </span>            :     }</a>
 <a name="3913"><span class="lineNum">    3913 </span>            : </a>
 <a name="3914"><span class="lineNum">    3914 </span>            :   /**</a>
