@@ -3,8 +3,8 @@
 
 #ifdef TEST_CHUNK_VECTOR
 #include "chunk_vector.hpp"
-template <typename T>
-using vector = CustomVector::chunk_vector<T>;
+template <typename T, typename Alloc = std::allocator<T>>
+using vector = CustomVector::chunk_vector<T, 4096 / sizeof(T), Alloc>;
 #endif
 
 #ifdef TRIVIALLY_COPYABLE
@@ -244,6 +244,214 @@ TEST_F(MutableIteratorTest, use_std_sort) {
 
 // Vector testing
 namespace {
+class ConstructorsTest : public testing::Test {
+protected:
+    template <typename T>
+    struct StateFullAlloc {
+        using value_type = T;
+        std::map<T *, size_t> allocated;
+
+        T *allocate(size_t n) {
+            T *ptr = static_cast<T *>(::operator new(n * sizeof(T)));
+            allocated[ptr] = n;
+            return ptr;
+        }
+
+        void deallocate(T *ptr, size_t n) {
+            assert(allocated[ptr] == n);
+            ::operator delete(ptr);
+        }
+
+        bool operator==(const StateFullAlloc &other) {
+            return allocated == other.allocated;
+        }
+    };
+
+    vector<test_int> v;
+    vector<test_int> v_short;
+    vector<test_int, StateFullAlloc<test_int>> v_statefull_alloc;
+
+    ConstructorsTest() {
+        v.push_back(1);
+        v.push_back(2);
+        v.push_back(3);
+        v.push_back(4);
+        v.push_back(5);
+        v_short.push_back(1);
+        v_short.push_back(2);
+        v_statefull_alloc.push_back(1);
+        v_statefull_alloc.push_back(2);
+        v_statefull_alloc.push_back(3);
+    }
+};
+
+TEST_F(ConstructorsTest, default_constructor) {
+    vector<test_int> vec;
+    EXPECT_EQ(vec.size(), 0);
+    EXPECT_EQ(sizeof vec, 32);
+}
+
+TEST_F(ConstructorsTest, alloc_constructor) {
+    vector<test_int> tmp((std::allocator<test_int>()));
+    EXPECT_EQ(tmp.size(), 0);
+    EXPECT_EQ(sizeof tmp, 32);
+
+    StateFullAlloc<test_int> alloc;
+    vector<test_int, StateFullAlloc<test_int>> vec(alloc);
+    EXPECT_EQ(vec.size(), 0);
+    EXPECT_GT(sizeof vec, 32);
+    vec.push_back(1);
+    EXPECT_EQ(vec.get_allocator().allocated.size(), 1);
+}
+
+TEST_F(ConstructorsTest, size_constructor) {
+    vector<test_int> vec(5, 123);
+    EXPECT_EQ(vec.size(), 5);
+    for (size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(vec[i].m_value, 123);
+    }
+    vector<test_int> vec2(5);
+    EXPECT_EQ(vec2.size(), 5);
+    for (size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(vec2[i].m_value, 0);
+    }
+}
+
+TEST_F(ConstructorsTest, range_constructor) {
+    vector<test_int> vec(v.begin(), v.end());
+    EXPECT_EQ(vec.size(), 5);
+    for (size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(vec[i].m_value, i + 1);
+    }
+}
+
+TEST_F(ConstructorsTest, fill_constructor) {
+    vector<test_int> v(5);
+    EXPECT_EQ(v.size(), 5);
+    for (size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(v[i].m_value, 0);
+    }
+}
+
+TEST_F(ConstructorsTest, copy_constructor) {
+    vector<test_int> vec(v);
+    EXPECT_EQ(vec.size(), 5);
+    for (size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(vec[i].m_value, i + 1);
+    }
+
+    vector<test_int, StateFullAlloc<test_int>> vec2(v_statefull_alloc);
+    EXPECT_EQ(vec2.size(), 3);
+    for (size_t i = 0; i < 3; ++i) {
+        EXPECT_EQ(vec2[i].m_value, i + 1);
+    }
+    EXPECT_EQ(vec2.get_allocator().allocated.size(), 2);
+
+    vector<test_int, StateFullAlloc<test_int>> vec3(
+        v_statefull_alloc, StateFullAlloc<test_int>()
+    );
+    EXPECT_EQ(vec3.size(), 3);
+    for (size_t i = 0; i < 3; ++i) {
+        EXPECT_EQ(vec3[i].m_value, i + 1);
+    }
+    EXPECT_EQ(vec3.get_allocator().allocated.size(), 1);
+}
+
+TEST_F(ConstructorsTest, move_constructor) {
+    vector<test_int> vec(std::move(v));
+    EXPECT_EQ(vec.size(), 5);
+    for (size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(vec[i].m_value, i + 1);
+    }
+    EXPECT_EQ(v.size(), 0);
+
+    vector<test_int, StateFullAlloc<test_int>> vec2(std::move(v_statefull_alloc)
+    );
+    EXPECT_EQ(vec2.size(), 3);
+    for (size_t i = 0; i < 3; ++i) {
+        EXPECT_EQ(vec2[i].m_value, i + 1);
+    }
+    EXPECT_EQ(v_statefull_alloc.size(), 0);
+    EXPECT_EQ(v_statefull_alloc.get_allocator().allocated.size(), 0);
+    EXPECT_EQ(vec2.get_allocator().allocated.size(), 1);
+}
+
+TEST_F(ConstructorsTest, move_constructor_with_other_alloc) {
+    vector<test_int, StateFullAlloc<test_int>> vec3(
+        std::move(v_statefull_alloc), StateFullAlloc<test_int>()
+    );
+    EXPECT_EQ(vec3.size(), 3);
+    for (size_t i = 0; i < 3; ++i) {
+        EXPECT_EQ(vec3[i].m_value, i + 1);
+    }
+    EXPECT_EQ(v_statefull_alloc.get_allocator().allocated.size(), 1);
+    EXPECT_EQ(vec3.get_allocator().allocated.size(), 1);
+}
+
+TEST_F(ConstructorsTest, initializer_list_constructor) {
+    vector<test_int> vec({1, 2, 3, 4, 5});
+    EXPECT_EQ(vec.size(), 5);
+    for (size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(vec[i].m_value, i + 1);
+    }
+}
+
+TEST_F(ConstructorsTest, assign_operator) {
+    v_short = v;
+    EXPECT_EQ(v_short.size(), 5);
+    for (size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(v_short[i].m_value, v[i].m_value);
+    }
+    v_short = v_short;
+    EXPECT_EQ(v_short.size(), 5);
+    for (size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(v_short[i].m_value, v[i].m_value);
+    }
+}
+
+TEST_F(ConstructorsTest, move_assign_operator) {
+    v_short = std::move(v);
+    EXPECT_EQ(v_short.size(), 5);
+    for (size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(v_short[i].m_value, i + 1);
+    }
+    v_short = std::move(v_short);
+    EXPECT_EQ(v_short.size(), 5);
+    for (size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(v_short[i].m_value, i + 1);
+    }
+}
+
+TEST_F(ConstructorsTest, assign) {
+    v.assign(2, 123);
+    EXPECT_EQ(v.size(), 2);
+    EXPECT_EQ(v[0].m_value, 123);
+    EXPECT_EQ(v[1].m_value, 123);
+    v.assign(5, 52);
+    EXPECT_EQ(v.size(), 5);
+    EXPECT_EQ(v[0].m_value, 52);
+    EXPECT_EQ(v[1].m_value, 52);
+    EXPECT_EQ(v[2].m_value, 52);
+    EXPECT_EQ(v[3].m_value, 52);
+    EXPECT_EQ(v[4].m_value, 52);
+    v.assign(v_short.begin(), v_short.end());
+    EXPECT_EQ(v.size(), 2);
+    EXPECT_EQ(v[0].m_value, 1);
+    EXPECT_EQ(v[1].m_value, 2);
+    v.assign({1, 2, 3, 4, 5});
+    EXPECT_EQ(v.size(), 5);
+    EXPECT_EQ(v[0].m_value, 1);
+    EXPECT_EQ(v[1].m_value, 2);
+    EXPECT_EQ(v[2].m_value, 3);
+    EXPECT_EQ(v[3].m_value, 4);
+    EXPECT_EQ(v[4].m_value, 5);
+}
+
+TEST_F(ConstructorsTest, get_allocator) {
+    auto alloc = v.get_allocator();
+    EXPECT_TRUE(alloc == std::allocator<test_int>());
+}
+
 class AccessTest : public testing::Test {
 protected:
     vector<test_int> v;
@@ -288,6 +496,13 @@ TEST_F(AccessTest, back) {
     EXPECT_EQ(v.back().m_value, 5);
     v.back() = 123;
     EXPECT_EQ(v.back().m_value, 123);
+}
+
+TEST_F(AccessTest, dump_data) {
+    auto data = v.copy_data();
+    for (std::size_t i = 0; i < 5; ++i) {
+        EXPECT_EQ(data[i].m_value, v[i].m_value);
+    }
 }
 
 class IteratorsTest : public testing::Test {
@@ -574,75 +789,100 @@ TEST_F(ModifiersTest, swap) {
     EXPECT_EQ(v[4].m_value, 5);
 }
 
-class VectorTest : public testing::Test {
+class NonMemberTest : public testing::Test {
 protected:
-    vector<test_int> v;
-    const test_int num{12345};
-    const test_int a{1};
-    const test_int b{2};
-    const test_int c{3};
+    vector<int> v_1;
+    vector<int> v_eq;
+    vector<int> v_little;
+    vector<int> v_less;
+    vector<int> v_greater;
+    vector<test_int> v_repeatable;
+
+    NonMemberTest() {
+        v_1.push_back(1);
+        v_1.push_back(2);
+        v_1.push_back(3);
+        v_1.push_back(4);
+        v_1.push_back(5);
+        v_eq.push_back(1);
+        v_eq.push_back(2);
+        v_eq.push_back(3);
+        v_eq.push_back(4);
+        v_eq.push_back(5);
+        v_little.push_back(1);
+        v_little.push_back(2);
+        v_less.push_back(1);
+        v_less.push_back(2);
+        v_less.push_back(0);
+        v_greater.push_back(1);
+        v_greater.push_back(2);
+        v_greater.push_back(4);
+        v_repeatable.push_back(1);
+        v_repeatable.push_back(1);
+        v_repeatable.push_back(2);
+        v_repeatable.push_back(2);
+        v_repeatable.push_back(3);
+        v_repeatable.push_back(3);
+    }
 };
 
-TEST_F(VectorTest, push_back_pass_by_const_ref) {
-    v.push_back(num);
-    EXPECT_EQ(v[0].m_value, num.m_value);
+TEST_F(NonMemberTest, equal) {
+    EXPECT_TRUE(v_1 == v_eq);
+    EXPECT_FALSE(v_1 == v_little);
 }
 
-TEST_F(VectorTest, push_back_pass_by_rvalue_ref) {
-    test_int copy = num;
-    v.push_back(std::move(copy));
-    EXPECT_EQ(v[0].m_value, num.m_value);
+TEST_F(NonMemberTest, not_equal) {
+    EXPECT_FALSE(v_1 != v_eq);
+    EXPECT_TRUE(v_1 != v_little);
 }
 
-TEST_F(VectorTest, push_back_multiple_elements) {
-    v.push_back(a);
-    v.push_back(b);
-    v.push_back(c);
-    EXPECT_EQ(v[0].m_value, a.m_value);
-    EXPECT_EQ(v[1].m_value, b.m_value);
-    EXPECT_EQ(v[2].m_value, c.m_value);
-    EXPECT_EQ(v.size(), 3);
+TEST_F(NonMemberTest, less) {
+    EXPECT_FALSE(v_1 < v_eq);
+    EXPECT_FALSE(v_1 < v_little);
+    EXPECT_TRUE(v_1 < v_greater);
+    EXPECT_FALSE(v_1 < v_less);
+    EXPECT_TRUE(v_little < v_1);
 }
 
-TEST_F(VectorTest, pop_back) {
-    v.push_back(a);
-    v.push_back(b);
-    v.push_back(c);
-    v.pop_back();
-    EXPECT_EQ(v[0].m_value, a.m_value);
-    EXPECT_EQ(v[1].m_value, b.m_value);
-    EXPECT_EQ(v.size(), 2);
+TEST_F(NonMemberTest, less_or_equal) {
+    EXPECT_TRUE(v_1 <= v_eq);
+    EXPECT_FALSE(v_1 <= v_little);
+    EXPECT_TRUE(v_1 <= v_greater);
+    EXPECT_FALSE(v_1 <= v_less);
+    EXPECT_TRUE(v_little <= v_1);
 }
 
-TEST_F(VectorTest, change_element) {
-    v.push_back(a);
-    v.push_back(b);
-    v.push_back(c);
-    v[1] = test_int(4);
-    EXPECT_EQ(v[0].m_value, a.m_value);
-    EXPECT_EQ(v[1].m_value, 4);
-    EXPECT_EQ(v[2].m_value, c.m_value);
+TEST_F(NonMemberTest, greater) {
+    EXPECT_FALSE(v_1 > v_eq);
+    EXPECT_TRUE(v_1 > v_little);
+    EXPECT_FALSE(v_1 > v_greater);
+    EXPECT_TRUE(v_1 > v_less);
+    EXPECT_FALSE(v_little > v_1);
 }
 
-TEST_F(VectorTest, many_push_back) {
-    const int n = 1000;
-    for (int i = 0; i < n; ++i) {
-        v.push_back(test_int(i));
-    }
-    for (int i = 0; i < n; ++i) {
-        EXPECT_EQ(v[i].m_value, i);
-    }
-    EXPECT_EQ(v.size(), 1000);
-    const int m = 10000;
-    for (int i = n; i < m; ++i) {
-        v.push_back(test_int(i));
-    }
-    for (int i = 0; i < m; ++i) {
-        EXPECT_EQ(v[i].m_value, i);
-    }
-    EXPECT_EQ(v.size(), 10000);
+TEST_F(NonMemberTest, greater_or_equal) {
+    EXPECT_TRUE(v_1 >= v_eq);
+    EXPECT_TRUE(v_1 >= v_little);
+    EXPECT_FALSE(v_1 >= v_greater);
+    EXPECT_TRUE(v_1 >= v_less);
+    EXPECT_FALSE(v_little >= v_1);
+}
+
+TEST_F(NonMemberTest, swap) {
+    std::swap(v_1, v_eq);
+    EXPECT_TRUE(v_1 == v_eq);
+    std::swap(v_1, v_little);
+    EXPECT_EQ(v_1[0], 1);
+    EXPECT_EQ(v_1[1], 2);
+    EXPECT_EQ(v_little[0], 1);
+    EXPECT_EQ(v_little[1], 2);
+    EXPECT_EQ(v_little[2], 3);
+    EXPECT_EQ(v_little[3], 4);
+    EXPECT_EQ(v_little[4], 5);
 }
 }  // namespace
+
+// TODO tests for incomplete types
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
