@@ -13,10 +13,6 @@ using vector = std::deque<T>;
 #include "chunk_vector.hpp"
 template <typename T>
 using vector = CustomVector::chunk_vector<T>;
-#elif TEST_CHUNK_VECTOR_V2
-#include "chunk_vector_v2.hpp"
-template <typename T>
-using vector = CustomVector::chunk_vector<T>;
 #endif
 
 namespace {

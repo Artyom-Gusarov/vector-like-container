@@ -46,13 +46,6 @@ target_compile_definitions(benchmark-chunk-vector PRIVATE TEST_CHUNK_VECTOR)
 target_link_libraries(benchmark-chunk-vector benchmark::benchmark)
 
 add_executable(
-        benchmark-chunk-vector-v2
-        benchmark_vector.cpp
-)
-target_compile_definitions(benchmark-chunk-vector-v2 PRIVATE TEST_CHUNK_VECTOR_V2)
-target_link_libraries(benchmark-chunk-vector-v2 benchmark::benchmark)
-
-add_executable(
         test-chunk-vector-trivially-copyable
         test_vector.cpp
 )
@@ -72,11 +65,4 @@ add_custom_target(run-all-benchmarks
         COMMAND benchmark-stl-vector --benchmark_out=../BM_results/benchmark_stl_vector.txt --benchmark_out_format=console
         COMMAND benchmark-chunk-vector --benchmark_out=../BM_results/benchmark_chunk_vector.txt --benchmark_out_format=console
         COMMAND benchmark-deque-as-vector --benchmark_out=../BM_results/benchmark_deque_as_vector.txt --benchmark_out_format=console
-)
-
-# Custom target to run benchmarks for chunk vector of different versions
-add_custom_target(run-chunk-vector-benchmarks
-        DEPENDS benchmark-chunk-vector benchmark-chunk-vector-v2
-        COMMAND benchmark-chunk-vector --benchmark_out=../BM_results/benchmark_chunk_vector.txt --benchmark_out_format=console
-        COMMAND benchmark-chunk-vector-v2 --benchmark_out=../BM_results/benchmark_chunk_vector_v2.txt --benchmark_out_format=console
 )
