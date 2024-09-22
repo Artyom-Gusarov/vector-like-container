@@ -82,6 +82,26 @@ public:
     }
 };
 
+template <typename T = int, std::size_t count = 1000>
+void reserve_BM(benchmark::State &state) {
+    for (auto _ : state) {
+        vector<T> v;
+        for (std::size_t i = 0; i < count; ++i) {
+            v.reserve(count);
+        }
+    }
+}
+
+template <typename T = int, std::size_t count = 1000>
+void reserve_by_one_BM(benchmark::State &state) {
+    for (auto _ : state) {
+        vector<T> v;
+        for (std::size_t i = 1; i <= count; ++i) {
+            v.reserve(i);
+        }
+    }
+}
+
 template <typename T = int, std::size_t iterations = 1000>
 void push_back_BM(benchmark::State &state) {
     T obj = T();
@@ -138,6 +158,24 @@ void random_access_BM(benchmark::State &state) {
 }
 
 }  // namespace
+
+BENCHMARK(reserve_BM<int, 1000>);
+BENCHMARK(reserve_BM<int, 100000>);
+
+BENCHMARK(reserve_BM<BigSizeClass<512>, 1000>);
+BENCHMARK(reserve_BM<BigSizeClass<512>, 100000>);
+
+BENCHMARK(reserve_BM<BigSizeClass<1024>, 1000>);
+BENCHMARK(reserve_BM<BigSizeClass<1024>, 100000>);
+
+BENCHMARK(reserve_by_one_BM<int, 1000>);
+BENCHMARK(reserve_by_one_BM<int, 100000>);
+
+BENCHMARK(reserve_by_one_BM<BigSizeClass<512>, 1000>);
+BENCHMARK(reserve_by_one_BM<BigSizeClass<512>, 100000>);
+
+BENCHMARK(reserve_by_one_BM<BigSizeClass<1024>, 1000>);
+BENCHMARK(reserve_by_one_BM<BigSizeClass<1024>, 100000>);
 
 BENCHMARK(push_back_BM<int, 1000>);
 BENCHMARK(push_back_BM<NonTriviallyCopyableInt, 1000>);

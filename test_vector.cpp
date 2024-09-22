@@ -2,7 +2,7 @@
 #include <list>
 
 #ifdef TEST_CHUNK_VECTOR
-#include "chunk_vector.hpp"
+#include "chunk_vector_v2.hpp"
 template <typename T, typename Alloc = std::allocator<T>>
 using vector = CustomVector::chunk_vector<T, 4096 / sizeof(T), Alloc>;
 #endif
@@ -244,6 +244,8 @@ TEST_F(MutableIteratorTest, use_std_sort) {
 
 // Vector testing
 namespace {
+constexpr std::size_t extra_memory_for_members = 24;
+
 class ConstructorsTest : public testing::Test {
 protected:
     template <typename T>
@@ -288,18 +290,18 @@ protected:
 TEST_F(ConstructorsTest, default_constructor) {
     vector<test_int> vec;
     EXPECT_EQ(vec.size(), 0);
-    EXPECT_EQ(sizeof vec, 32);
+    EXPECT_EQ(sizeof vec, 32 + extra_memory_for_members);
 }
 
 TEST_F(ConstructorsTest, alloc_constructor) {
     vector<test_int> tmp((std::allocator<test_int>()));
     EXPECT_EQ(tmp.size(), 0);
-    EXPECT_EQ(sizeof tmp, 32);
+    EXPECT_EQ(sizeof tmp, 32 + extra_memory_for_members);
 
     StateFullAlloc<test_int> alloc;
     vector<test_int, StateFullAlloc<test_int>> vec(alloc);
     EXPECT_EQ(vec.size(), 0);
-    EXPECT_GT(sizeof vec, 32);
+    EXPECT_GT(sizeof vec, 32 + extra_memory_for_members);
     vec.push_back(1);
     EXPECT_EQ(vec.get_allocator().allocated.size(), 1);
 }
