@@ -140,42 +140,13 @@ void random_access_BM(benchmark::State &state) {
 }  // namespace
 
 BENCHMARK(push_back_BM<int, 1000>);
-BENCHMARK(push_back_BM<NonTriviallyCopyableInt, 1000>);
 BENCHMARK(push_back_BM<int, 100000>);
-BENCHMARK(push_back_BM<NonTriviallyCopyableInt, 100000>);
 
 BENCHMARK(push_back_BM<BigSizeClass<512>, 1000>);
-BENCHMARK(push_back_BM<NonTriviallyCopyableBigSizeClass<512>, 1000>);
 BENCHMARK(push_back_BM<BigSizeClass<512>, 100000>);
-BENCHMARK(push_back_BM<NonTriviallyCopyableBigSizeClass<512>, 100000>);
 
 BENCHMARK(push_back_BM<BigSizeClass<1024>, 1000>);
-BENCHMARK(push_back_BM<NonTriviallyCopyableBigSizeClass<1024>, 1000>);
 BENCHMARK(push_back_BM<BigSizeClass<1024>, 100000>);
-BENCHMARK(push_back_BM<NonTriviallyCopyableBigSizeClass<1024>, 100000>);
-
-BENCHMARK(push_back_after_reserve_BM<int, 1000>);
-BENCHMARK(push_back_after_reserve_BM<NonTriviallyCopyableInt, 1000>);
-BENCHMARK(push_back_after_reserve_BM<int, 100000>);
-BENCHMARK(push_back_after_reserve_BM<NonTriviallyCopyableInt, 100000>);
-
-BENCHMARK(push_back_after_reserve_BM<BigSizeClass<512>, 1000>);
-BENCHMARK(push_back_after_reserve_BM<
-          NonTriviallyCopyableBigSizeClass<512>,
-          1000>);
-BENCHMARK(push_back_after_reserve_BM<BigSizeClass<512>, 100000>);
-BENCHMARK(push_back_after_reserve_BM<
-          NonTriviallyCopyableBigSizeClass<512>,
-          100000>);
-
-BENCHMARK(push_back_after_reserve_BM<BigSizeClass<1024>, 1000>);
-BENCHMARK(push_back_after_reserve_BM<
-          NonTriviallyCopyableBigSizeClass<1024>,
-          1000>);
-BENCHMARK(push_back_after_reserve_BM<BigSizeClass<1024>, 100000>);
-BENCHMARK(push_back_after_reserve_BM<
-          NonTriviallyCopyableBigSizeClass<1024>,
-          100000>);
 
 BENCHMARK(access_BM<int, 1000>);
 BENCHMARK(access_BM<int, 100000>);

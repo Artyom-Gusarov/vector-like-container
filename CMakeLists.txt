@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-#set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 
 project(MyVector)
 
@@ -77,6 +76,6 @@ add_custom_target(run-all-benchmarks
 # Custom target to run benchmarks for chunk vector of different versions
 add_custom_target(run-chunk-vector-benchmarks
         DEPENDS benchmark-chunk-vector benchmark-chunk-vector-v2
-        COMMAND benchmark-chunk-vector --benchmark_out=../BM_results/benchmark_chunk_vector.txt --benchmark_out_format=console
-        COMMAND benchmark-chunk-vector-v2 --benchmark_out=../BM_results/benchmark_chunk_vector_v2.txt --benchmark_out_format=console
+        COMMAND benchmark-chunk-vector --benchmark_out=../BM_results/benchmark_chunk_vector.json --benchmark_out_format=json
+        COMMAND benchmark-chunk-vector-v2 --benchmark_out=../BM_results/benchmark_chunk_vector_v2.json --benchmark_out_format=json
 )
