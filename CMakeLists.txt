@@ -24,58 +24,37 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googlebenchmark)
 
 add_executable(
-        benchmark-stl-vector
-        benchmark_vector.cpp
-)
-target_compile_definitions(benchmark-stl-vector PRIVATE TEST_STL_VECTOR)
-target_link_libraries(benchmark-stl-vector benchmark::benchmark)
-
-add_executable(
-        benchmark-deque-as-vector
-        benchmark_vector.cpp
-)
-target_compile_definitions(benchmark-deque-as-vector PRIVATE TEST_STL_DEQUE)
-target_link_libraries(benchmark-deque-as-vector benchmark::benchmark)
-
-add_executable(
         benchmark-chunk-vector
         benchmark_vector.cpp
 )
 target_compile_definitions(benchmark-chunk-vector PRIVATE TEST_CHUNK_VECTOR)
 target_link_libraries(benchmark-chunk-vector benchmark::benchmark)
 
-add_executable(
-        benchmark-chunk-vector-v2
-        benchmark_vector.cpp
-)
-target_compile_definitions(benchmark-chunk-vector-v2 PRIVATE TEST_CHUNK_VECTOR_V2)
-target_link_libraries(benchmark-chunk-vector-v2 benchmark::benchmark)
-
-add_executable(
-        test-chunk-vector-trivially-copyable
-        test_vector.cpp
-)
-target_compile_definitions(test-chunk-vector-trivially-copyable PRIVATE TEST_CHUNK_VECTOR TRIVIALLY_COPYABLE)
-target_link_libraries(test-chunk-vector-trivially-copyable gtest_main)
-
-add_executable(
-        test-chunk-vector-non-trivially-copyable
-        test_vector.cpp
-)
-target_compile_definitions(test-chunk-vector-non-trivially-copyable PRIVATE TEST_CHUNK_VECTOR NON_TRIVIALLY_COPYABLE)
-target_link_libraries(test-chunk-vector-non-trivially-copyable gtest_main)
-
-# Custom target to run all benchmarks
-add_custom_target(run-all-benchmarks
-        DEPENDS benchmark-stl-vector benchmark-chunk-vector benchmark-deque-as-vector
-        COMMAND benchmark-stl-vector --benchmark_out=../BM_results/benchmark_stl_vector.txt --benchmark_out_format=console
-        COMMAND benchmark-chunk-vector --benchmark_out=../BM_results/benchmark_chunk_vector.txt --benchmark_out_format=console
-        COMMAND benchmark-deque-as-vector --benchmark_out=../BM_results/benchmark_deque_as_vector.txt --benchmark_out_format=console
-)
+foreach(CHUNK_SIZE RANGE 1024 65536)
+    if(CHUNK_SIZE EQUAL 1024 OR CHUNK_SIZE EQUAL 2048 OR CHUNK_SIZE EQUAL 4096 OR CHUNK_SIZE EQUAL 8192 OR
+            CHUNK_SIZE EQUAL 16384 OR CHUNK_SIZE EQUAL 32768 OR CHUNK_SIZE EQUAL 65536)
+        set(EXE_NAME "benchmark-chunk-vector-v2-${CHUNK_SIZE}")
+        add_executable(${EXE_NAME} benchmark_vector.cpp)
+        target_compile_definitions(${EXE_NAME} PRIVATE TEST_CHUNK_VECTOR_V2 CHUNK_SIZE=${CHUNK_SIZE})
+        target_link_libraries(${EXE_NAME} benchmark::benchmark)
+    endif()
+endforeach()
 
 # Custom target to run benchmarks for chunk vector of different versions
 add_custom_target(run-chunk-vector-benchmarks
-        DEPENDS benchmark-chunk-vector benchmark-chunk-vector-v2
-        COMMAND benchmark-chunk-vector --benchmark_out=../BM_results/benchmark_chunk_vector.json --benchmark_out_format=json
-        COMMAND benchmark-chunk-vector-v2 --benchmark_out=../BM_results/benchmark_chunk_vector_v2.json --benchmark_out_format=json
+        DEPENDS benchmark-chunk-vector benchmark-chunk-vector-v2-1024 benchmark-chunk-vector-v2-2048 benchmark-chunk-vector-v2-4096 benchmark-chunk-vector-v2-8192 benchmark-chunk-vector-v2-16384 benchmark-chunk-vector-v2-32768 benchmark-chunk-vector-v2-65536
+        COMMAND benchmark-chunk-vector --benchmark_out=../BM_results/benchmark_chunk_vector_1024.json --benchmark_out_format=json
+        COMMAND benchmark-chunk-vector-v2-1024 --benchmark_out=../BM_results/benchmark_chunk_vector_v2_1024.json --benchmark_out_format=json
+        COMMAND benchmark-chunk-vector --benchmark_out=../BM_results/benchmark_chunk_vector_2048.json --benchmark_out_format=json
+        COMMAND benchmark-chunk-vector-v2-2048 --benchmark_out=../BM_results/benchmark_chunk_vector_v2_2048.json --benchmark_out_format=json
+        COMMAND benchmark-chunk-vector --benchmark_out=../BM_results/benchmark_chunk_vector_4096.json --benchmark_out_format=json
+        COMMAND benchmark-chunk-vector-v2-4096 --benchmark_out=../BM_results/benchmark_chunk_vector_v2_4096.json --benchmark_out_format=json
+        COMMAND benchmark-chunk-vector --benchmark_out=../BM_results/benchmark_chunk_vector_8192.json --benchmark_out_format=json
+        COMMAND benchmark-chunk-vector-v2-8192 --benchmark_out=../BM_results/benchmark_chunk_vector_v2_8192.json --benchmark_out_format=json
+        COMMAND benchmark-chunk-vector --benchmark_out=../BM_results/benchmark_chunk_vector_16384.json --benchmark_out_format=json
+        COMMAND benchmark-chunk-vector-v2-16384 --benchmark_out=../BM_results/benchmark_chunk_vector_v2_16384.json --benchmark_out_format=json
+        COMMAND benchmark-chunk-vector --benchmark_out=../BM_results/benchmark_chunk_vector_32768.json --benchmark_out_format=json
+        COMMAND benchmark-chunk-vector-v2-32768 --benchmark_out=../BM_results/benchmark_chunk_vector_v2_32768.json --benchmark_out_format=json
+        COMMAND benchmark-chunk-vector --benchmark_out=../BM_results/benchmark_chunk_vector_65536.json --benchmark_out_format=json
+        COMMAND benchmark-chunk-vector-v2-65536 --benchmark_out=../BM_results/benchmark_chunk_vector_v2_65536.json --benchmark_out_format=json
 )

@@ -87,7 +87,7 @@ struct alloc_wrapper<
 
 template <
     typename T,
-    std::size_t chunk_size = 65536 / sizeof(T),
+    std::size_t chunk_size = CHUNK_SIZE / sizeof(T),
     typename Alloc = std::allocator<T>>
 class chunk_vector : private alloc_wrapper<T, Alloc, void> {
 private:
