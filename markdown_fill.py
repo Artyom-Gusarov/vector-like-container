@@ -2,8 +2,8 @@ import os
 import re
 
 def update_readme_with_images():
-    readme_path = '../README.md'
-    image_dir = '.'  # Директория, где сохраняются изображения
+    readme_path = 'README.md'
+    image_dir = 'BM_results'  # Директория, где сохраняются изображения
     image_files = [f for f in os.listdir(image_dir) if f.endswith('_benchmark_ratios.png')]
 
     with open(readme_path, 'w') as readme_file:

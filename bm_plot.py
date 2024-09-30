@@ -22,8 +22,8 @@ def plot_benchmark_ratios():
     ratios = {}
 
     for postfix in postfixes:
-        base_file = f'benchmark_chunk_vector_{postfix}.json'
-        v2_file = f'benchmark_chunk_vector_v2_{postfix}.json'
+        base_file = f'BM_results/benchmark_chunk_vector_{postfix}.json'
+        v2_file = f'BM_results/benchmark_chunk_vector_v2_{postfix}.json'
 
         if os.path.exists(base_file) and os.path.exists(v2_file):
             base_data = load_benchmark_data(base_file)
@@ -48,7 +48,7 @@ def plot_benchmark_ratios():
                     ratios[name] = []
                 ratios[name].append(None)
 
-    ind = 0
+    letter = 'a'
     for name, values in ratios.items():
         plt.figure(figsize=(10, 5))
         plt.plot(postfixes, values, marker='o')
@@ -59,9 +59,9 @@ def plot_benchmark_ratios():
         plt.xticks(postfixes, labels=[str(p) for p in postfixes])
         plt.grid(True)
         plt.tight_layout()
-        plt.savefig(f'{ind}_benchmark_ratios.png')
+        plt.savefig(f'BM_results/{letter}_benchmark_ratios.png')
         plt.close()
-        ind += 1
+        letter = chr(ord(letter) + 1)
 
 
 plot_benchmark_ratios()
