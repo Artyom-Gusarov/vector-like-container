@@ -22,9 +22,7 @@ public:
     NonTriviallyCopyableInt(int value = 0) : value_(value) {
     }
 
-    NonTriviallyCopyableInt(const NonTriviallyCopyableInt &other)
-        : value_(other.value_) {
-    }
+    NonTriviallyCopyableInt(const NonTriviallyCopyableInt &other) = default;
 
     NonTriviallyCopyableInt &operator=(const NonTriviallyCopyableInt &other) {
         if (this != &other) {
@@ -33,10 +31,13 @@ public:
         return *this;
     }
 
-    ~NonTriviallyCopyableInt() {
-    }
+    NonTriviallyCopyableInt(NonTriviallyCopyableInt &&) = default;
 
-    int getValue() const {
+    NonTriviallyCopyableInt &operator=(NonTriviallyCopyableInt &&) = default;
+
+    ~NonTriviallyCopyableInt() = default;
+
+    [[nodiscard]] int getValue() const {
         return value_;
     }
 
@@ -55,12 +56,13 @@ class NonTriviallyCopyableBigSizeClass {
 public:
     char data[size];
 
-    NonTriviallyCopyableBigSizeClass() {
+    NonTriviallyCopyableBigSizeClass() : data() {
     }
 
     NonTriviallyCopyableBigSizeClass(
         const NonTriviallyCopyableBigSizeClass &other
-    ) {
+    )
+        : data() {
         for (std::size_t i = 0; i < size; ++i) {
             data[i] = other.data[i];
         }
@@ -76,6 +78,14 @@ public:
         }
         return *this;
     }
+
+    NonTriviallyCopyableBigSizeClass(NonTriviallyCopyableBigSizeClass &&) =
+        default;
+
+    NonTriviallyCopyableBigSizeClass &
+    operator=(NonTriviallyCopyableBigSizeClass &&) = default;
+
+    ~NonTriviallyCopyableBigSizeClass() = default;
 };
 
 template <typename T = int, std::size_t iterations = 1000>
@@ -134,6 +144,36 @@ void random_access_BM(benchmark::State &state) {
 }
 
 }  // namespace
+
+static_assert(
+    sizeof(BigSizeClass<512>) == 512,
+    "BigSizeClass<512> size is incorrect"
+);
+static_assert(
+    sizeof(BigSizeClass<1024>) == 1024,
+    "BigSizeClass<1024> size is incorrect"
+);
+static_assert(
+    sizeof(NonTriviallyCopyableBigSizeClass<512>) == 512,
+    "NonTriviallyCopyableBigSizeClass<512> size is incorrect"
+);
+static_assert(
+    sizeof(NonTriviallyCopyableBigSizeClass<1024>) == 1024,
+    "NonTriviallyCopyableBigSizeClass<1024> size is incorrect"
+);
+
+static_assert(
+    !std::is_trivially_copyable_v<NonTriviallyCopyableInt>,
+    "NonTriviallyCopyableInt should not be trivially copyable"
+);
+static_assert(
+    !std::is_trivially_copyable_v<NonTriviallyCopyableBigSizeClass<512>>,
+    "NonTriviallyCopyableBigSizeClass<512> should not be trivially copyable"
+);
+static_assert(
+    !std::is_trivially_copyable_v<NonTriviallyCopyableBigSizeClass<1024>>,
+    "NonTriviallyCopyableBigSizeClass<1024> should not be trivially copyable"
+);
 
 BENCHMARK(push_back_BM<int, 1000>);
 BENCHMARK(push_back_BM<NonTriviallyCopyableInt, 1000>);
